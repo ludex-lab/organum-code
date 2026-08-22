@@ -80,13 +80,20 @@ test("relink license identity is invariant to Windows checkout endings", async (
     "licenses/JAVASCRIPTCORE-LGPL-2.0.txt",
     "utf8",
   );
+  const canonicalBunLicense = canonicalRelinkMaterial(bunLicense);
+  const canonicalJavaScriptCoreLicense = canonicalRelinkMaterial(
+    javaScriptCoreLicense,
+  );
   assert.equal(
-    canonicalRelinkMaterial(bunLicense.replace(/\n/gu, "\r\n")),
-    bunLicense,
+    canonicalRelinkMaterial(canonicalBunLicense.replace(/\n/gu, "\r\n")),
+    canonicalBunLicense,
   );
   assert.doesNotThrow(() => buildRelinkMaterialsManifest({
     release,
-    bunLicense: bunLicense.replace(/\n/gu, "\r\n"),
-    javaScriptCoreLicense: javaScriptCoreLicense.replace(/\n/gu, "\r\n"),
+    bunLicense: canonicalBunLicense.replace(/\n/gu, "\r\n"),
+    javaScriptCoreLicense: canonicalJavaScriptCoreLicense.replace(
+      /\n/gu,
+      "\r\n",
+    ),
   }));
 });

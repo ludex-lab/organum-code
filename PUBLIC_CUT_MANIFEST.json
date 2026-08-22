@@ -2,7 +2,7 @@
   "schema": "organum-code/public-cut/v1",
   "source": {
     "repository": "JihoonJeong/organum-code",
-    "commit": "fa3d6ae7d53bdbb1300b2afa9f5606d6249f891f"
+    "commit": "2cc1e880f86a49cbe845a21803bd25d80425aa46"
   },
   "target": "ludex-lab/organum-code",
   "version": "0.1.0-preview.1",
@@ -717,7 +717,7 @@
     },
     {
       "path": "tests/relink-materials.test.ts",
-      "sha256": "25b872b01d322fded93e4d26c118842d5114a569416058ead5dd56185ab27874"
+      "sha256": "13c00d2ca912b507bd0012139f5c6c4871314c47de878b6f5d8db7984c3b9142"
     },
     {
       "path": "tests/runtime.test.ts",
