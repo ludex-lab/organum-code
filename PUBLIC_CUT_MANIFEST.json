@@ -2,7 +2,7 @@
   "schema": "organum-code/public-cut/v1",
   "source": {
     "repository": "JihoonJeong/organum-code",
-    "commit": "9f2048a94e276a7b3749d5615ee01b08648f517b"
+    "commit": "15aa5e80c6be62a9045f3ea1088da4faeec81242"
   },
   "target": "ludex-lab/organum-code",
   "version": "0.1.0-preview.1",
@@ -14,6 +14,10 @@
     {
       "path": ".github/workflows/ci.yml",
       "sha256": "4a60278bbe1e477aba76e1ac59b2563e8b98df12b55d87bd3fdcf9ad99558995"
+    },
+    {
+      "path": ".github/workflows/release-preview.yml",
+      "sha256": "fdca22f3388e9a2ad8809b46550b2e722148884b646fcec15c2c874e781de3d7"
     },
     {
       "path": ".gitignore",
@@ -45,7 +49,7 @@
     },
     {
       "path": "docs/offline-release-bundle.md",
-      "sha256": "c3d89b2bff1d46b32118943ffa1cfa6a122ccf5dd253358d80bc63a04f5407be"
+      "sha256": "6ac5f72e01f0cfb826241dc7f3f248136ec1f0e0df5c41e7008f4462adc04b44"
     },
     {
       "path": "docs/protocol-contract.md",
@@ -53,7 +57,7 @@
     },
     {
       "path": "docs/public-cut-policy.md",
-      "sha256": "4aa93b857d7179d0db893a830ecbe6a4beeedc407a591ec9616744ea9933c55d"
+      "sha256": "74c31bd52652863082cad71ff98eb6d9573720bce8d4654988ddd34e396e26d4"
     },
     {
       "path": "docs/release-installation-lifecycle.md",
@@ -68,8 +72,12 @@
       "sha256": "0e4db40b6ed8a3c998622fbc8aca49e9b5d5cb73be288ac5e9a7bb8ff0ebc34d"
     },
     {
+      "path": "licenses/BUN-1.3.14-LICENSE.md",
+      "sha256": "2cb858b2db8fc793bca2093489c5bc8eee615d002cc4924254904044c27a0afa"
+    },
+    {
       "path": "package.json",
-      "sha256": "eb438261db2b5e33b5e77a8b0874c98229f5fdd54b2d6c3583d2730ed6e5df14"
+      "sha256": "99e6ec231519a6aa146af1bca01208a424152e3868d8d9b2cfee28095aa62b0b"
     },
     {
       "path": "schemas/organum-code-finding-delivery-cast-binding-v1.schema.json",
@@ -129,11 +137,15 @@
     },
     {
       "path": "scripts/generate-release-archive.ts",
-      "sha256": "690cc69abb372d2861e4807d641f238af66f4c2f3bf2d9fcd7af6112c778c775"
+      "sha256": "4706da8da908533285b9ecdf5cd30a6333a8e2a2850d9525b9690c2a8478d024"
     },
     {
       "path": "scripts/generate-release-manifest.ts",
       "sha256": "688702223c7a57003d3b4b5f578bd96f04237b91c31d66b156ab97047d5d7739"
+    },
+    {
+      "path": "scripts/generate-third-party-notices.ts",
+      "sha256": "d616ad78fd9cf53467b26465f3a84501b7acf9509a8befdc209043f1f8ed3e30"
     },
     {
       "path": "scripts/manage-release-installation.ts",
@@ -597,7 +609,7 @@
     },
     {
       "path": "src/release-archive.ts",
-      "sha256": "24f439a5abdef721988a15f28435a3741f9f7c4477b7bd5e102097b4e500d745"
+      "sha256": "42cb6cdf567156b6318c93162b98708d55dcd84029cb06494d86a52355468b04"
     },
     {
       "path": "src/release-cli.ts",
@@ -661,7 +673,7 @@
     },
     {
       "path": "tests/release-archive.test.ts",
-      "sha256": "dc5613b7fbb59fe44e3fb17544a700da0dc53de6717d6693edbf59611c7e4e2f"
+      "sha256": "95ca4a58d0f168a22e9e7e99e8045d3141fddd79be717be05c88fc825dd65d66"
     },
     {
       "path": "tests/release-cli.test.ts",
@@ -678,6 +690,10 @@
     {
       "path": "tests/runtime.test.ts",
       "sha256": "09a1dbfffc400c1e1ff2ae973c377caeef889907f331d7ff38a0b02466911074"
+    },
+    {
+      "path": "tests/third-party-notices.test.ts",
+      "sha256": "71cbe0be08d80e6a4fbc13410bccb8809b13404dd8e319f2b1f43dab54626f56"
     },
     {
       "path": "tsconfig.json",

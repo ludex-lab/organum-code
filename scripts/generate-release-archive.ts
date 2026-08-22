@@ -23,7 +23,14 @@ function git(args: readonly string[]): string {
 }
 
 function parseOptions(args: readonly string[]): Map<string, string> {
-  const allowed = new Set(["--artifact", "--manifest", "--checksum", "--output-directory"]);
+  const allowed = new Set([
+    "--artifact",
+    "--manifest",
+    "--checksum",
+    "--license",
+    "--third-party-notices",
+    "--output-directory",
+  ]);
   if (args.length % 2 !== 0) throw new Error("Release archive options must be name/value pairs");
   const options = new Map<string, string>();
   for (let index = 0; index < args.length; index += 2) {
@@ -37,7 +44,7 @@ function parseOptions(args: readonly string[]): Map<string, string> {
       options.has(name)
     ) {
       throw new Error(
-        "usage: generate-release-archive [--artifact PATH] [--manifest PATH] [--checksum PATH] [--output-directory PATH]",
+        "usage: generate-release-archive [--artifact PATH] [--manifest PATH] [--checksum PATH] [--license PATH] [--third-party-notices PATH] [--output-directory PATH]",
       );
     }
     options.set(name, value);
@@ -74,6 +81,10 @@ const result = await createReleaseArchive({
   artifactPath,
   manifestPath,
   checksumPath,
+  licensePath: resolve(options.get("--license") ?? "LICENSE"),
+  thirdPartyNoticesPath: resolve(
+    options.get("--third-party-notices") ?? "dist/THIRD_PARTY_NOTICES.txt",
+  ),
   outputDirectory: resolve(options.get("--output-directory") ?? "dist"),
 });
 console.log(JSON.stringify(result));

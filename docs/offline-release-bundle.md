@@ -76,8 +76,9 @@ rooted entry list.
 This slice establishes offline packaging integrity, not authenticity or public
 availability. The following remain outside it:
 
-- dependency/runtime license inventory and `THIRD_PARTY_NOTICES`;
-- signed release metadata and a trusted checksum delivery channel;
+- LGPL object/relink obligations for the self-contained Bun executable;
+- a trusted public checksum delivery channel (staged artifacts already receive
+  GitHub Sigstore build provenance);
 - macOS signing/notarization and Windows signing;
 - compressed/native platform packages and shell `PATH` integration;
 - public download, upgrade bootstrap, forced-interruption recovery, and release

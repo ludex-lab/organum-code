@@ -60,8 +60,13 @@ source cut의 MIT와 standalone executable의 재배포 의무는 별도다. Bun
 
 1. dependency와 embedded runtime license inventory 생성
 2. `THIRD_PARTY_NOTICES`와 필요한 license text 포함
-3. LGPL object/relink 의무의 적용 여부 검토
-4. artifact별 checksum, source revision, build provenance 기록
-5. gate를 통과하지 못한 platform binary는 release하지 않음
+   - Bun 1.3.14 공식 고지는 SHA-256으로 고정한다.
+   - production dependency metadata/version/license가 lock graph와 다르면
+     archive 생성을 실패시킨다.
+3. 공개 전 `Stage Release Artifacts` workflow에서 macOS/Linux/Windows
+   archive, checksum, GitHub Sigstore provenance를 생성한다.
+4. LGPL object/relink 의무의 적용 여부 검토
+5. artifact별 checksum, source revision, build provenance 기록
+6. gate를 통과하지 못한 platform binary는 release하지 않음
 
 이 문서는 법률 자문을 대신하지 않는다. dependency 또는 build 방식이 바뀌면 release마다 다시 검토한다.

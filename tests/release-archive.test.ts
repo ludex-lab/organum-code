@@ -26,13 +26,18 @@ import type {
 } from "../src/release-installation.js";
 
 async function fixture(root: string): Promise<{
-  paths: ReleaseBundlePaths;
+  paths: ReleaseBundlePaths & {
+    licensePath: string;
+    thirdPartyNoticesPath: string;
+  };
   manifest: InstallableReleaseManifest;
 }> {
   const file = process.platform === "win32" ? "organum-code.exe" : "organum-code";
   const artifactPath = join(root, file);
   const manifestPath = `${artifactPath}.release.json`;
   const checksumPath = `${artifactPath}.sha256`;
+  const licensePath = join(root, "LICENSE");
+  const thirdPartyNoticesPath = join(root, "THIRD_PARTY_NOTICES.txt");
   const body = Buffer.from("offline executable fixture\n", "utf8");
   const digest = createHash("sha256").update(body).digest("hex");
   const manifest: InstallableReleaseManifest = {
@@ -48,7 +53,18 @@ async function fixture(root: string): Promise<{
   if (process.platform !== "win32") await chmod(artifactPath, 0o755);
   await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   await writeFile(checksumPath, `${digest}  ${file}\n`);
-  return { paths: { artifactPath, manifestPath, checksumPath }, manifest };
+  await writeFile(licensePath, "Organum Code fixture license\n");
+  await writeFile(thirdPartyNoticesPath, "Fixture third-party notices\n");
+  return {
+    paths: {
+      artifactPath,
+      manifestPath,
+      checksumPath,
+      licensePath,
+      thirdPartyNoticesPath,
+    },
+    manifest,
+  };
 }
 
 test("release archive naming and bootstraps are platform-bound and runtime-free", () => {
@@ -108,6 +124,8 @@ test("release tar is deterministic and contains one rooted offline bundle", asyn
       `${prefix}install.sh`,
       `${prefix}install.ps1`,
       `${prefix}README.txt`,
+      `${prefix}LICENSE`,
+      `${prefix}THIRD_PARTY_NOTICES.txt`,
     ]);
   } finally {
     await rm(root, { recursive: true, force: true });

@@ -39,6 +39,8 @@ export interface ReleaseArchiveResult {
 
 export interface CreateReleaseArchiveOptions extends ReleaseBundlePaths {
   outputDirectory: string;
+  licensePath: string;
+  thirdPartyNoticesPath: string;
 }
 
 function sha256(data: string | Buffer): string {
@@ -118,6 +120,9 @@ PowerShell:
 
 The bootstrap runs ./${executable} and installs only into the explicit prefix.
 Run <prefix>/bin/${executable} --version after installation.
+
+LICENSE contains the Organum Code license. THIRD_PARTY_NOTICES.txt contains the
+pinned compiler runtime and production dependency notices.
 `;
 }
 
@@ -210,6 +215,11 @@ export async function createReleaseArchive(
   }
   const manifestBody = await readFile(resolve(options.manifestPath), "utf8");
   const checksumBody = await readFile(resolve(options.checksumPath), "utf8");
+  const licenseBody = await readFile(resolve(options.licensePath), "utf8");
+  const thirdPartyNoticesBody = await readFile(
+    resolve(options.thirdPartyNoticesPath),
+    "utf8",
+  );
   const posix = posixBootstrap(manifest.artifact.file);
   const powershell = powershellBootstrap(manifest.artifact.file);
   const readme = bundleReadme(manifest);
@@ -228,6 +238,8 @@ export async function createReleaseArchive(
       { file: "install.sh", bytes: Buffer.byteLength(posix), sha256: sha256(posix), mode: "0755" },
       { file: "install.ps1", bytes: Buffer.byteLength(powershell), sha256: sha256(powershell), mode: "0644" },
       { file: "README.txt", bytes: Buffer.byteLength(readme), sha256: sha256(readme), mode: "0644" },
+      { file: "LICENSE", bytes: Buffer.byteLength(licenseBody), sha256: sha256(licenseBody), mode: "0644" },
+      { file: "THIRD_PARTY_NOTICES.txt", bytes: Buffer.byteLength(thirdPartyNoticesBody), sha256: sha256(thirdPartyNoticesBody), mode: "0644" },
     ],
   }, null, 2)}\n`;
   const prefix = `${root}/`;
@@ -245,6 +257,8 @@ export async function createReleaseArchive(
     bufferEntry(`${prefix}install.sh`, posix, 0o755),
     bufferEntry(`${prefix}install.ps1`, powershell, 0o644),
     bufferEntry(`${prefix}README.txt`, readme, 0o644),
+    bufferEntry(`${prefix}LICENSE`, licenseBody, 0o644),
+    bufferEntry(`${prefix}THIRD_PARTY_NOTICES.txt`, thirdPartyNoticesBody, 0o644),
   ];
   await mkdir(outputDirectory, { recursive: true, mode: 0o755 });
   const temporary = `${archivePath}.${process.pid}.${randomUUID()}.tmp`;

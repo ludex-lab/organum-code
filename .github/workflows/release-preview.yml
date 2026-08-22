@@ -1,0 +1,44 @@
+name: Stage Release Artifacts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  stage-release:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run test:release
+      - run: bun run build:bundle-local
+      - run: bun run smoke:release-archive
+      - name: Attest archive provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/organum-code-v*.tar
+      - name: Retain staged archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: organum-code-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            dist/organum-code-v*.tar
+            dist/organum-code-v*.tar.sha256
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
