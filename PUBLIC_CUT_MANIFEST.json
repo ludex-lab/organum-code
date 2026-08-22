@@ -2,7 +2,7 @@
   "schema": "organum-code/public-cut/v1",
   "source": {
     "repository": "JihoonJeong/organum-code",
-    "commit": "866cc6c1f5f7edc90e9ffb52991d33fb43828592"
+    "commit": "23e1fe0b380773962199aeb9a911e8300ded6930"
   },
   "target": "ludex-lab/organum-code",
   "version": "0.1.0-preview.1",
@@ -13,11 +13,11 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "4a60278bbe1e477aba76e1ac59b2563e8b98df12b55d87bd3fdcf9ad99558995"
+      "sha256": "b1aeb585f3ad238587399bd8ede6f0fd9c4855c58322e956f1349c2a5ac981e5"
     },
     {
       "path": ".github/workflows/release-preview.yml",
-      "sha256": "fdca22f3388e9a2ad8809b46550b2e722148884b646fcec15c2c874e781de3d7"
+      "sha256": "c923db54fb531b4a464363acaa640879f8399f2adf5cd95dbfe0a38a472ee5a9"
     },
     {
       "path": ".gitignore",
@@ -29,7 +29,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "a03df8db14d01251f64edceba4b4dfd422c5d0adac7e6b9b44dfeb9e015187f1"
+      "sha256": "a09715932a5b81dbbfcd9435380d692ae3fdc8818f70e90718f9091582d79d29"
     },
     {
       "path": "bun.lock",

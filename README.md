@@ -48,5 +48,6 @@ publisher authenticity. See:
 ## License
 
 Organum Code source in this cut is released under the [MIT License](LICENSE).
-Third-party components and embedded runtimes retain their own licenses. Binary
-release assets are gated on a separate dependency and runtime notice inventory.
+Third-party components and embedded runtimes retain their own licenses. Staged
+archives include a generated `THIRD_PARTY_NOTICES.txt`; public binary release
+still requires closure of the Bun/LGPL relink boundary and platform code signing.
