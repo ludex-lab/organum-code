@@ -25,6 +25,20 @@ Organum Code is installed separately from the Python `organum` package. The
 shared product homepage for Organum Inspector, Organum Hub, and Organum Code is
 [the Organum site](https://ludex-lab.github.io/organum/).
 
+## Install the public preview
+
+Organum Code currently uses one free, source-based installation channel on
+macOS and Windows. Install the exact Bun version in `.bun-version`, then:
+
+```bash
+bun add --global github:ludex-lab/organum-code#v0.1.0-preview.1
+organum-code --version
+```
+
+This installs a Bun-owned source command, not an unsigned Organum Code native
+executable. See [Bun source installation](docs/source-installation.md) for
+upgrade, uninstall, and trust-boundary details.
+
 ## Build from source
 
 Source builds require the exact Bun version in `.bun-version`.
@@ -51,7 +65,8 @@ Organum Code source in this cut is released under the [MIT License](LICENSE).
 Third-party components and embedded runtimes retain their own licenses. Staged
 archives include generated notices, complete pinned Bun/JavaScriptCore license
 text, relinking instructions, and an exact public source-archive binding.
-The unsigned 3OS staging path and exact public source/relink kit are qualified.
-Public binary release still requires final distribution review and the
-fail-closed signed candidate path in
+The source-install path is the current public preview channel. The unsigned 3OS
+staging path and exact public source/relink kit remain qualified, but those
+native archives are not published to users. A future public binary release still
+requires final distribution review and the fail-closed signed candidate path in
 [public distribution cut](docs/public-distribution-cut.md).

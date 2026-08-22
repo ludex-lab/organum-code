@@ -84,4 +84,9 @@ Windows Authenticode를 각각 통과시켜야 하며 public Release를 자동 �
 필요한 credential, 후보 검증 및 수동 승격 절차는
 [`public-distribution-cut.md`](./public-distribution-cut.md)에 고정한다.
 
+유료 platform identity를 도입하기 전의 공개 preview는
+[`source-installation.md`](./source-installation.md)의 Bun source-install 경로만
+사용한다. macOS와 Windows가 같은 version tag와 source entrypoint를 사용하며,
+unsigned standalone archive는 일반 사용자용 Release asset으로 게시하지 않는다.
+
 이 문서는 법률 자문을 대신하지 않는다. dependency 또는 build 방식이 바뀌면 release마다 다시 검토한다.

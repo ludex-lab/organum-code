@@ -19,7 +19,7 @@
     "node": ">=20"
   },
   "bin": {
-    "organum-code": "./dist/src/main.js"
+    "organum-code": "./bin/organum-code"
   },
   "scripts": {
     "build": "bun run build:plugin && tsc -p tsconfig.json",
@@ -36,6 +36,7 @@
     "smoke:standalone": "bun ./scripts/smoke-standalone.ts",
     "smoke:release-installation": "bun ./scripts/smoke-release-installation.ts",
     "smoke:release-archive": "bun ./scripts/smoke-release-archive.ts",
+    "smoke:source-install": "bun ./scripts/smoke-source-install.ts",
     "test:release": "bun ./scripts/run-release-tests.ts"
   },
   "dependencies": {
