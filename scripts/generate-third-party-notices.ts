@@ -69,8 +69,8 @@ function sha256(body: string): string {
   return createHash("sha256").update(body).digest("hex");
 }
 
-function normalizedLicense(body: string): string {
-  return body.replace(/\r\n/gu, "\n").trimEnd();
+export function canonicalLicenseText(body: string): string {
+  return `${body.replace(/\r\n/gu, "\n").trimEnd()}\n`;
 }
 
 function assertExactDependencies(
@@ -101,7 +101,8 @@ export async function generateThirdPartyNotices(
     zod: "4.1.8",
   });
   const bunLicense = await readFile(resolve(projectRoot, BUN_LICENSE_PATH), "utf8");
-  if (sha256(bunLicense) !== BUN_LICENSE_SHA256) {
+  const canonicalBunLicense = canonicalLicenseText(bunLicense);
+  if (sha256(canonicalBunLicense) !== BUN_LICENSE_SHA256) {
     throw new Error("Pinned Bun 1.3.14 license text failed its SHA-256 check");
   }
 
@@ -116,7 +117,7 @@ export async function generateThirdPartyNotices(
     "----------",
     "Source: https://github.com/oven-sh/bun/blob/bun-v1.3.14/LICENSE.md",
     "",
-    normalizedLicense(bunLicense),
+    canonicalBunLicense.trimEnd(),
   ];
 
   for (const expected of RUNTIME_PACKAGES) {
@@ -143,9 +144,9 @@ export async function generateThirdPartyNotices(
       metadata.dependencies ?? {},
       expected.dependencies,
     );
-    const licenseBody = normalizedLicense(
+    const licenseBody = canonicalLicenseText(
       await readFile(resolve(directory, "LICENSE"), "utf8"),
-    );
+    ).trimEnd();
     const title = `${expected.name}@${expected.version} (${expected.license})`;
     sections.push("", title, "-".repeat(title.length), "", licenseBody);
   }

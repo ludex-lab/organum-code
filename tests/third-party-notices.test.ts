@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { generateThirdPartyNotices } from "../scripts/generate-third-party-notices.js";
+import {
+  canonicalLicenseText,
+  generateThirdPartyNotices,
+} from "../scripts/generate-third-party-notices.js";
+
+test("license hashing canonicalizes checkout line endings", () => {
+  assert.equal(canonicalLicenseText("line one\r\nline two\r\n"), "line one\nline two\n");
+  assert.equal(canonicalLicenseText("line one\nline two"), "line one\nline two\n");
+});
 
 test("third-party notices bind the pinned compiler runtime and production graph", async () => {
   const notices = await generateThirdPartyNotices();

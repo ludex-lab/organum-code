@@ -2,7 +2,7 @@
   "schema": "organum-code/public-cut/v1",
   "source": {
     "repository": "JihoonJeong/organum-code",
-    "commit": "15aa5e80c6be62a9045f3ea1088da4faeec81242"
+    "commit": "866cc6c1f5f7edc90e9ffb52991d33fb43828592"
   },
   "target": "ludex-lab/organum-code",
   "version": "0.1.0-preview.1",
@@ -145,7 +145,7 @@
     },
     {
       "path": "scripts/generate-third-party-notices.ts",
-      "sha256": "d616ad78fd9cf53467b26465f3a84501b7acf9509a8befdc209043f1f8ed3e30"
+      "sha256": "a960217c64bfe23287a9afd277f5fd8ebc3e16b0cbb0aa2f1ff7a926e3430a61"
     },
     {
       "path": "scripts/manage-release-installation.ts",
@@ -693,7 +693,7 @@
     },
     {
       "path": "tests/third-party-notices.test.ts",
-      "sha256": "71cbe0be08d80e6a4fbc13410bccb8809b13404dd8e319f2b1f43dab54626f56"
+      "sha256": "e8cab69a86bbf62d89e049fa0753db8c48caf5dacc7230c15820fddb84a53a2c"
     },
     {
       "path": "tsconfig.json",
