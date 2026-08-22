@@ -49,5 +49,7 @@ publisher authenticity. See:
 
 Organum Code source in this cut is released under the [MIT License](LICENSE).
 Third-party components and embedded runtimes retain their own licenses. Staged
-archives include a generated `THIRD_PARTY_NOTICES.txt`; public binary release
-still requires closure of the Bun/LGPL relink boundary and platform code signing.
+archives include generated notices, complete pinned Bun/JavaScriptCore license
+text, relinking instructions, and an exact public source-archive binding.
+Public binary release still requires final distribution review and platform
+code signing.

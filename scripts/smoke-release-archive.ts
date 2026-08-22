@@ -50,6 +50,32 @@ try {
   });
   assert.equal(extract.status, 0, extract.stderr);
   const bundleRoot = join(extraction, releaseArchiveRoot(bundle.manifest));
+  const relink = JSON.parse(
+    await readFile(join(bundleRoot, "relink.json"), "utf8"),
+  ) as {
+    schema: string;
+    source: { commit: string; archive: string };
+    runtime: { commit: string };
+    library: { commit: string };
+  };
+  assert.equal(relink.schema, "organum-code/relink-materials/v1");
+  assert.equal(relink.source.commit, bundle.manifest.source.commit);
+  assert.equal(
+    relink.source.archive,
+    `organum-code-v${bundle.manifest.version}-source.tar`,
+  );
+  assert.equal(
+    relink.runtime.commit,
+    "0d9b296af33f2b851fcbf4df3e9ec89751734ba4",
+  );
+  assert.equal(
+    relink.library.commit,
+    "5488984d20e0dbfe4be2c3ba8fb18eb81a5e0e8b",
+  );
+  assert.match(
+    await readFile(join(bundleRoot, "JAVASCRIPTCORE-LGPL-2.0.txt"), "utf8"),
+    /GNU LIBRARY GENERAL PUBLIC LICENSE/u,
+  );
   const install = process.platform === "win32"
     ? spawnSync(
         "powershell.exe",

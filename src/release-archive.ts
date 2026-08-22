@@ -17,6 +17,10 @@ import {
   type InstallableReleaseManifest,
   type ReleaseBundlePaths,
 } from "./release-installation.js";
+import {
+  buildRelinkMaterialsManifest,
+  serializeRelinkMaterialsManifest,
+} from "./relink-materials.js";
 
 export const RELEASE_ARCHIVE_SCHEMA =
   "organum-code/release-archive/v1" as const;
@@ -40,6 +44,9 @@ export interface ReleaseArchiveResult {
 export interface CreateReleaseArchiveOptions extends ReleaseBundlePaths {
   outputDirectory: string;
   licensePath: string;
+  bunLicensePath: string;
+  javaScriptCoreLicensePath: string;
+  relinkingPath: string;
   thirdPartyNoticesPath: string;
 }
 
@@ -167,6 +174,12 @@ On Windows, do not run uninstall through the installed executable because a
 running executable cannot reliably delete itself. Keep this extracted bundle,
 or re-download the exact platform bundle, for removal.
 
+Relinking and license material:
+  RELINKING.md
+  relink.json
+  BUN-LICENSE.md
+  JAVASCRIPTCORE-LGPL-2.0.txt
+
 LICENSE contains the Organum Code license. THIRD_PARTY_NOTICES.txt contains the
 pinned compiler runtime and production dependency notices.
 `;
@@ -262,6 +275,15 @@ export async function createReleaseArchive(
   const manifestBody = await readFile(resolve(options.manifestPath), "utf8");
   const checksumBody = await readFile(resolve(options.checksumPath), "utf8");
   const licenseBody = await readFile(resolve(options.licensePath), "utf8");
+  const bunLicenseBody = await readFile(
+    resolve(options.bunLicensePath),
+    "utf8",
+  );
+  const javaScriptCoreLicenseBody = await readFile(
+    resolve(options.javaScriptCoreLicensePath),
+    "utf8",
+  );
+  const relinkingBody = await readFile(resolve(options.relinkingPath), "utf8");
   const thirdPartyNoticesBody = await readFile(
     resolve(options.thirdPartyNoticesPath),
     "utf8",
@@ -271,6 +293,13 @@ export async function createReleaseArchive(
   const posixUninstall = posixUninstallBootstrap(manifest.artifact.file);
   const powershellUninstall = powershellUninstallBootstrap(
     manifest.artifact.file,
+  );
+  const relinkManifest = serializeRelinkMaterialsManifest(
+    buildRelinkMaterialsManifest({
+      release: manifest,
+      bunLicense: bunLicenseBody,
+      javaScriptCoreLicense: javaScriptCoreLicenseBody,
+    }),
   );
   const readme = bundleReadme(manifest);
   const contentManifest = `${JSON.stringify({
@@ -289,6 +318,10 @@ export async function createReleaseArchive(
       { file: "install.ps1", bytes: Buffer.byteLength(powershell), sha256: sha256(powershell), mode: "0644" },
       { file: "uninstall.sh", bytes: Buffer.byteLength(posixUninstall), sha256: sha256(posixUninstall), mode: "0755" },
       { file: "uninstall.ps1", bytes: Buffer.byteLength(powershellUninstall), sha256: sha256(powershellUninstall), mode: "0644" },
+      { file: "RELINKING.md", bytes: Buffer.byteLength(relinkingBody), sha256: sha256(relinkingBody), mode: "0644" },
+      { file: "relink.json", bytes: Buffer.byteLength(relinkManifest), sha256: sha256(relinkManifest), mode: "0644" },
+      { file: "BUN-LICENSE.md", bytes: Buffer.byteLength(bunLicenseBody), sha256: sha256(bunLicenseBody), mode: "0644" },
+      { file: "JAVASCRIPTCORE-LGPL-2.0.txt", bytes: Buffer.byteLength(javaScriptCoreLicenseBody), sha256: sha256(javaScriptCoreLicenseBody), mode: "0644" },
       { file: "README.txt", bytes: Buffer.byteLength(readme), sha256: sha256(readme), mode: "0644" },
       { file: "LICENSE", bytes: Buffer.byteLength(licenseBody), sha256: sha256(licenseBody), mode: "0644" },
       { file: "THIRD_PARTY_NOTICES.txt", bytes: Buffer.byteLength(thirdPartyNoticesBody), sha256: sha256(thirdPartyNoticesBody), mode: "0644" },
@@ -310,6 +343,14 @@ export async function createReleaseArchive(
     bufferEntry(`${prefix}install.ps1`, powershell, 0o644),
     bufferEntry(`${prefix}uninstall.sh`, posixUninstall, 0o755),
     bufferEntry(`${prefix}uninstall.ps1`, powershellUninstall, 0o644),
+    bufferEntry(`${prefix}RELINKING.md`, relinkingBody, 0o644),
+    bufferEntry(`${prefix}relink.json`, relinkManifest, 0o644),
+    bufferEntry(`${prefix}BUN-LICENSE.md`, bunLicenseBody, 0o644),
+    bufferEntry(
+      `${prefix}JAVASCRIPTCORE-LGPL-2.0.txt`,
+      javaScriptCoreLicenseBody,
+      0o644,
+    ),
     bufferEntry(`${prefix}README.txt`, readme, 0o644),
     bufferEntry(`${prefix}LICENSE`, licenseBody, 0o644),
     bufferEntry(`${prefix}THIRD_PARTY_NOTICES.txt`, thirdPartyNoticesBody, 0o644),

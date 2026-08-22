@@ -28,6 +28,9 @@ function parseOptions(args: readonly string[]): Map<string, string> {
     "--manifest",
     "--checksum",
     "--license",
+    "--bun-license",
+    "--javascriptcore-license",
+    "--relinking",
     "--third-party-notices",
     "--output-directory",
   ]);
@@ -44,7 +47,7 @@ function parseOptions(args: readonly string[]): Map<string, string> {
       options.has(name)
     ) {
       throw new Error(
-        "usage: generate-release-archive [--artifact PATH] [--manifest PATH] [--checksum PATH] [--license PATH] [--third-party-notices PATH] [--output-directory PATH]",
+        "usage: generate-release-archive [--artifact PATH] [--manifest PATH] [--checksum PATH] [--license PATH] [--bun-license PATH] [--javascriptcore-license PATH] [--relinking PATH] [--third-party-notices PATH] [--output-directory PATH]",
       );
     }
     options.set(name, value);
@@ -82,6 +85,16 @@ const result = await createReleaseArchive({
   manifestPath,
   checksumPath,
   licensePath: resolve(options.get("--license") ?? "LICENSE"),
+  bunLicensePath: resolve(
+    options.get("--bun-license") ?? "licenses/BUN-1.3.14-LICENSE.md",
+  ),
+  javaScriptCoreLicensePath: resolve(
+    options.get("--javascriptcore-license") ??
+      "licenses/JAVASCRIPTCORE-LGPL-2.0.txt",
+  ),
+  relinkingPath: resolve(
+    options.get("--relinking") ?? "docs/public-binary-relinking.md",
+  ),
   thirdPartyNoticesPath: resolve(
     options.get("--third-party-notices") ?? "dist/THIRD_PARTY_NOTICES.txt",
   ),

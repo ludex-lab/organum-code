@@ -10,7 +10,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import test from "node:test";
 
 import {
@@ -30,6 +30,9 @@ import type {
 async function fixture(root: string): Promise<{
   paths: ReleaseBundlePaths & {
     licensePath: string;
+    bunLicensePath: string;
+    javaScriptCoreLicensePath: string;
+    relinkingPath: string;
     thirdPartyNoticesPath: string;
   };
   manifest: InstallableReleaseManifest;
@@ -63,6 +66,11 @@ async function fixture(root: string): Promise<{
       manifestPath,
       checksumPath,
       licensePath,
+      bunLicensePath: resolve("licenses/BUN-1.3.14-LICENSE.md"),
+      javaScriptCoreLicensePath: resolve(
+        "licenses/JAVASCRIPTCORE-LGPL-2.0.txt",
+      ),
+      relinkingPath: resolve("docs/public-binary-relinking.md"),
       thirdPartyNoticesPath,
     },
     manifest,
@@ -134,10 +142,51 @@ test("release tar is deterministic and contains one rooted offline bundle", asyn
       `${prefix}install.ps1`,
       `${prefix}uninstall.sh`,
       `${prefix}uninstall.ps1`,
+      `${prefix}RELINKING.md`,
+      `${prefix}relink.json`,
+      `${prefix}BUN-LICENSE.md`,
+      `${prefix}JAVASCRIPTCORE-LGPL-2.0.txt`,
       `${prefix}README.txt`,
       `${prefix}LICENSE`,
       `${prefix}THIRD_PARTY_NOTICES.txt`,
     ]);
+    const extracted = join(root, "extracted");
+    await mkdir(extracted);
+    const extraction = spawnSync(
+      "tar",
+      ["-xf", first.archivePath, "-C", extracted],
+      { encoding: "utf8", timeout: 10_000 },
+    );
+    assert.equal(extraction.status, 0, extraction.stderr);
+    const relink = JSON.parse(
+      await readFile(join(extracted, releaseArchiveRoot(manifest), "relink.json"), "utf8"),
+    ) as {
+      schema: string;
+      source: { commit: string; archive: string };
+      runtime: { commit: string };
+      library: { commit: string };
+    };
+    assert.equal(relink.schema, "organum-code/relink-materials/v1");
+    assert.equal(relink.source.commit, manifest.source.commit);
+    assert.equal(
+      relink.source.archive,
+      "organum-code-v0.1.0-preview.1-source.tar",
+    );
+    assert.equal(
+      relink.runtime.commit,
+      "0d9b296af33f2b851fcbf4df3e9ec89751734ba4",
+    );
+    assert.equal(
+      relink.library.commit,
+      "5488984d20e0dbfe4be2c3ba8fb18eb81a5e0e8b",
+    );
+    assert.match(
+      await readFile(
+        join(extracted, releaseArchiveRoot(manifest), "JAVASCRIPTCORE-LGPL-2.0.txt"),
+        "utf8",
+      ),
+      /GNU LIBRARY GENERAL PUBLIC LICENSE/u,
+    );
   } finally {
     await rm(root, { recursive: true, force: true });
   }

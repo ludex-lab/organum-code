@@ -128,6 +128,12 @@ removal through the corresponding bundle-local uninstall helper and checks
 that unrelated prefix data survives. Those bootstraps execute only the bundled
 standalone and require no Bun/Node runtime or source tree.
 
+The archive additionally binds complete pinned Bun/JavaScriptCore license and
+relink material. The staged workflow produces a separate deterministic public
+source archive, checksum, and provenance attestation from exactly the public
+cut inventory. These materials close the mechanical relink-kit omission but do
+not substitute for final distribution review or platform signing.
+
 - Linux x64/arm64 and musl runtime smoke tests
 - macOS x64 and arm64 release artifacts
 - Windows x64 and arm64 release artifacts

@@ -40,12 +40,24 @@ install.sh
 install.ps1
 uninstall.sh
 uninstall.ps1
+RELINKING.md
+relink.json
+BUN-LICENSE.md
+JAVASCRIPTCORE-LGPL-2.0.txt
 README.txt
 ```
 
 `bundle.json` is `organum-code/release-archive/v1`. It binds the release
 identity and digest, size, and mode of every payload other than itself. The
 adjacent archive checksum binds the final tar bytes.
+
+`relink.json` is `organum-code/relink-materials/v1`. It binds the exact public
+application source archive and commit to Bun 1.3.14 commit
+`0d9b296af33f2b851fcbf4df3e9ec89751734ba4`, the WebKit revision that Bun pins,
+and byte-exact copies of the Bun and JavaScriptCore license material. Archive
+generation fails if either pinned license drifts. The corresponding public
+source archive is generated from exactly the files in `PUBLIC_CUT_MANIFEST.json`
+and receives its own checksum and provenance attestation.
 
 ## Runtime-free initial installation
 
@@ -98,7 +110,7 @@ independently assert tar determinism and the exact rooted entry list.
 This slice establishes offline packaging integrity, not authenticity or public
 availability. The following remain outside it:
 
-- LGPL object/relink obligations for the self-contained Bun executable;
+- final distribution review of the included LGPL source/relink offer;
 - a trusted public checksum delivery channel (staged artifacts already receive
   GitHub Sigstore build provenance);
 - macOS signing/notarization and Windows signing;

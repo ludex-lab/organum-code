@@ -9,6 +9,29 @@ permissions:
   attestations: write
 
 jobs:
+  stage-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - run: bun run source:release
+      - name: Attest source archive provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/organum-code-v*-source.tar
+      - name: Retain exact public source archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: organum-code-Source
+          path: |
+            dist/organum-code-v*-source.tar
+            dist/organum-code-v*-source.tar.sha256
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+
   stage-release:
     strategy:
       fail-fast: false

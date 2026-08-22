@@ -63,10 +63,18 @@ source cut의 MIT와 standalone executable의 재배포 의무는 별도다. Bun
    - Bun 1.3.14 공식 고지는 SHA-256으로 고정한다.
    - production dependency metadata/version/license가 lock graph와 다르면
      archive 생성을 실패시킨다.
-3. 공개 전 `Stage Release Artifacts` workflow에서 macOS/Linux/Windows
-   archive, checksum, GitHub Sigstore provenance를 생성한다.
-4. LGPL object/relink 의무의 적용 여부 검토
-5. artifact별 checksum, source revision, build provenance 기록
-6. gate를 통과하지 못한 platform binary는 release하지 않음
+3. 각 binary archive에 완전한 JavaScriptCore LGPL v2 원문, Bun license,
+   `RELINKING.md`, content-addressed `relink.json`을 포함한다. Bun/WebKit 및
+   license byte가 고정값과 다르면 archive 생성을 실패시킨다.
+4. public cut manifest와 정확히 같은 tracked file만 담은 deterministic source
+   archive와 checksum을 생성한다. binary의 `relink.json`은 그 source archive
+   이름과 exact public commit을 가리켜야 한다.
+5. 공개 전 `Stage Release Artifacts` workflow에서 source와
+   macOS/Linux/Windows archive, checksum, GitHub Sigstore provenance를 생성한다.
+6. LGPL source/relink offer는 binary와 같은 public Release page에서 익명으로
+   제공하고 최종 distribution review를 거친다.
+7. artifact별 checksum, source revision, build provenance와 platform signing
+   결과를 기록한다.
+8. gate를 통과하지 못한 platform binary는 release하지 않음
 
 이 문서는 법률 자문을 대신하지 않는다. dependency 또는 build 방식이 바뀌면 release마다 다시 검토한다.
