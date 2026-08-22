@@ -36,7 +36,7 @@
     "smoke:standalone": "bun ./scripts/smoke-standalone.ts",
     "smoke:release-installation": "bun ./scripts/smoke-release-installation.ts",
     "smoke:release-archive": "bun ./scripts/smoke-release-archive.ts",
-    "test:release": "bun test ./tests/release-archive.test.ts ./tests/release-cli.test.ts ./tests/release-installation.test.ts ./tests/release-manifest.test.ts ./tests/release-source-archive.test.ts ./tests/relink-materials.test.ts ./tests/runtime.test.ts ./tests/third-party-notices.test.ts"
+    "test:release": "bun ./scripts/run-release-tests.ts"
   },
   "dependencies": {
     "@anthropic-ai/sandbox-runtime": "0.0.50",

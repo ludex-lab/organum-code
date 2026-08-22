@@ -45,6 +45,10 @@ function sha256(body: string): string {
   return createHash("sha256").update(body).digest("hex");
 }
 
+export function canonicalRelinkMaterial(body: string): string {
+  return body.replace(/\r\n?/gu, "\n");
+}
+
 export function buildRelinkMaterialsManifest(options: {
   release: InstallableReleaseManifest;
   bunLicense: string;
@@ -53,11 +57,14 @@ export function buildRelinkMaterialsManifest(options: {
   if (options.release.build.bun !== "1.3.14") {
     throw new Error("Relink materials require the pinned Bun 1.3.14 runtime");
   }
-  if (sha256(options.bunLicense) !== PINNED_BUN_SOURCE.licenseSha256) {
+  if (
+    sha256(canonicalRelinkMaterial(options.bunLicense)) !==
+    PINNED_BUN_SOURCE.licenseSha256
+  ) {
     throw new Error("Pinned Bun relink license bytes drifted");
   }
   if (
-    sha256(options.javaScriptCoreLicense) !==
+    sha256(canonicalRelinkMaterial(options.javaScriptCoreLicense)) !==
     PINNED_WEBKIT_SOURCE.javaScriptCoreLicenseSha256
   ) {
     throw new Error("Pinned JavaScriptCore LGPL bytes drifted");

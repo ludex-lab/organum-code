@@ -19,6 +19,7 @@ import {
 } from "./release-installation.js";
 import {
   buildRelinkMaterialsManifest,
+  canonicalRelinkMaterial,
   serializeRelinkMaterialsManifest,
 } from "./relink-materials.js";
 
@@ -275,13 +276,11 @@ export async function createReleaseArchive(
   const manifestBody = await readFile(resolve(options.manifestPath), "utf8");
   const checksumBody = await readFile(resolve(options.checksumPath), "utf8");
   const licenseBody = await readFile(resolve(options.licensePath), "utf8");
-  const bunLicenseBody = await readFile(
-    resolve(options.bunLicensePath),
-    "utf8",
+  const bunLicenseBody = canonicalRelinkMaterial(
+    await readFile(resolve(options.bunLicensePath), "utf8"),
   );
-  const javaScriptCoreLicenseBody = await readFile(
-    resolve(options.javaScriptCoreLicensePath),
-    "utf8",
+  const javaScriptCoreLicenseBody = canonicalRelinkMaterial(
+    await readFile(resolve(options.javaScriptCoreLicensePath), "utf8"),
   );
   const relinkingBody = await readFile(resolve(options.relinkingPath), "utf8");
   const thirdPartyNoticesBody = await readFile(

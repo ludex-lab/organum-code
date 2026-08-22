@@ -4,6 +4,7 @@ import test from "node:test";
 
 import {
   buildRelinkMaterialsManifest,
+  canonicalRelinkMaterial,
   serializeRelinkMaterialsManifest,
 } from "../src/relink-materials.js";
 import type { InstallableReleaseManifest } from "../src/release-installation.js";
@@ -71,4 +72,21 @@ test("relink manifest refuses license or runtime drift", async () => {
     }),
     /pinned Bun 1\.3\.14/,
   );
+});
+
+test("relink license identity is invariant to Windows checkout endings", async () => {
+  const bunLicense = await readFile("licenses/BUN-1.3.14-LICENSE.md", "utf8");
+  const javaScriptCoreLicense = await readFile(
+    "licenses/JAVASCRIPTCORE-LGPL-2.0.txt",
+    "utf8",
+  );
+  assert.equal(
+    canonicalRelinkMaterial(bunLicense.replace(/\n/gu, "\r\n")),
+    bunLicense,
+  );
+  assert.doesNotThrow(() => buildRelinkMaterialsManifest({
+    release,
+    bunLicense: bunLicense.replace(/\n/gu, "\r\n"),
+    javaScriptCoreLicense: javaScriptCoreLicense.replace(/\n/gu, "\r\n"),
+  }));
 });
