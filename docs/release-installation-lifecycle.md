@@ -59,9 +59,16 @@ bun ./scripts/manage-release-installation.ts uninstall \
 ```
 
 Windows uses the same contract with `organum-code.exe` and an absolute Windows
-prefix. CI exercises install, installed-binary `--version`, status, and
-uninstall on the default macOS, Ubuntu, and Windows runners. Isolated source
-tests additionally exercise upgrade and one-step rollback.
+prefix. The offline archive carries bundle-local `uninstall.sh` and
+`uninstall.ps1` entrypoints, so removal does not require Bun or the source tree.
+On Windows the helper deliberately invokes the executable retained in the
+extracted bundle rather than the installed executable: this avoids asking a
+running Windows image to delete itself. Keep the extracted bundle, or
+re-download the exact platform bundle, until removal is complete. CI exercises
+install, installed-binary `--version`, status, bundle-local uninstall, managed
+file absence, and unrelated-prefix preservation on the default macOS, Ubuntu,
+and Windows runners. Isolated source tests additionally exercise upgrade and
+one-step rollback.
 
 ## Fail-closed boundaries
 
@@ -87,8 +94,9 @@ forced-process-interruption recovery, code signing, notarization, compressed
 native packages, and public release delivery remain separate gates. The manager
 performs no network request and never enables runtime auto-update.
 
-The standalone product also exposes only the bounded initial-install and
-read-only status subset as `organum-code release install|status`. The offline
-POSIX and PowerShell bootstraps use that path, so end users do not need Bun for
-initial installation. Archive construction and its remaining gates are defined
-in [`offline-release-bundle.md`](./offline-release-bundle.md).
+The standalone product exposes the bounded distribution lifecycle subset as
+`organum-code release install|status|uninstall`. The offline POSIX and
+PowerShell bootstraps use that path, so end users do not need Bun for initial
+installation or removal. Upgrade and rollback remain source/operator-only.
+Archive construction and its remaining gates are defined in
+[`offline-release-bundle.md`](./offline-release-bundle.md).

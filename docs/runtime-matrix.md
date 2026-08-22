@@ -123,8 +123,10 @@ end-user installer or auto-update path.
 
 CI also builds one deterministic platform-named USTAR archive, verifies its
 external SHA-256, extracts it, and performs initial installation through
-`install.sh` on POSIX or `install.ps1` on Windows. Those bootstraps execute only
-the bundled standalone and require no Bun/Node runtime.
+`install.sh` on POSIX or `install.ps1` on Windows. It then performs verified
+removal through the corresponding bundle-local uninstall helper and checks
+that unrelated prefix data survives. Those bootstraps execute only the bundled
+standalone and require no Bun/Node runtime or source tree.
 
 - Linux x64/arm64 and musl runtime smoke tests
 - macOS x64 and arm64 release artifacts

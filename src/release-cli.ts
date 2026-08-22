@@ -3,14 +3,15 @@ import { isAbsolute, resolve } from "node:path";
 import {
   inspectInstallation,
   installRelease,
+  uninstallRelease,
   type InstallState,
 } from "./release-installation.js";
 
 const RELEASE_USAGE =
-  "release install --prefix ABSOLUTE_PATH --artifact PATH --manifest PATH --checksum PATH | release status --prefix ABSOLUTE_PATH";
+  "release install --prefix ABSOLUTE_PATH --artifact PATH --manifest PATH --checksum PATH | release status --prefix ABSOLUTE_PATH | release uninstall --prefix ABSOLUTE_PATH";
 
 export interface ReleaseCommandResult {
-  operation: "install" | "status";
+  operation: "install" | "status" | "uninstall";
   prefix: string;
   installed: boolean;
   generation: number | null;
@@ -66,7 +67,11 @@ export async function runReleaseCommand(
   args: readonly string[],
 ): Promise<ReleaseCommandResult> {
   const operation = args[0];
-  if (operation !== "install" && operation !== "status") {
+  if (
+    operation !== "install" &&
+    operation !== "status" &&
+    operation !== "uninstall"
+  ) {
     throw new Error(RELEASE_USAGE);
   }
   const options = parseOptions(args.slice(1));
@@ -81,6 +86,10 @@ export async function runReleaseCommand(
   const prefix = resolve(rawPrefix);
   if (operation === "status") {
     return result(operation, prefix, await inspectInstallation(prefix));
+  }
+  if (operation === "uninstall") {
+    await uninstallRelease(prefix);
+    return result(operation, prefix, null);
   }
   const state = await installRelease(prefix, {
     artifactPath: resolve(required(options, "--artifact")),

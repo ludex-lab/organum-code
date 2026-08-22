@@ -1,8 +1,9 @@
 # Offline release bundle
 
-Status: deterministic local archive and runtime-free initial bootstrap implemented
-for the `0.1.0-preview.1` internal preview on 2026-08-22. No archive is uploaded,
-published, signed, notarized, or presented as a public release.
+Status: deterministic local archive and runtime-free install/removal bootstraps
+implemented for the `0.1.0-preview.1` internal preview on 2026-08-22. No archive
+is published, signed by a platform publisher, notarized, or presented as a
+public release.
 
 ## Archive identity
 
@@ -37,6 +38,8 @@ organum-code[.exe].sha256
 bundle.json
 install.sh
 install.ps1
+uninstall.sh
+uninstall.ps1
 README.txt
 ```
 
@@ -59,17 +62,36 @@ or in PowerShell:
 ./install.ps1 C:\absolute\install\prefix
 ```
 
-Both scripts contain no Bun, Node.js, package-manager, network, shell-profile,
-or privilege-escalation step. They run the bundled standalone executable's
-`release install` command. That command reuses the strict manifest/checksum,
-host target, non-symlink, unmanaged-path, and content-addressed install-ledger
-checks described in
+Both install scripts contain no Bun, Node.js, package-manager, network,
+shell-profile, or privilege-escalation step. They run the bundled standalone
+executable's `release install` command. That command reuses the strict
+manifest/checksum, host target, non-symlink, unmanaged-path, and
+content-addressed install-ledger checks described in
 [`release-installation-lifecycle.md`](./release-installation-lifecycle.md).
 
+Removal uses the same extracted bundle:
+
+```bash
+./uninstall.sh /absolute/install/prefix
+```
+
+or in PowerShell:
+
+```powershell
+./uninstall.ps1 C:\absolute\install\prefix
+```
+
+The bundle-local executable verifies the state ledger, active and archived
+bytes, and exact managed inventory before removing anything. It deletes only
+registered Organum Code files and preserves unrelated prefix data. The
+bundle-local form is required on Windows so the process is not executing the
+installed file it must remove.
+
 CI generates and extracts the archive on macOS, Ubuntu, and Windows, invokes the
-native bootstrap for that OS, runs the installed executable, and verifies its
-managed status. Source tests independently assert tar determinism and the exact
-rooted entry list.
+native install and uninstall bootstraps for that OS, runs the installed
+executable, verifies managed status, verifies removal from the bundle-local
+executable, and checks that unrelated prefix data survives. Source tests
+independently assert tar determinism and the exact rooted entry list.
 
 ## Remaining distribution gates
 
@@ -81,7 +103,7 @@ availability. The following remain outside it:
   GitHub Sigstore build provenance);
 - macOS signing/notarization and Windows signing;
 - compressed/native platform packages and shell `PATH` integration;
-- public download, upgrade bootstrap, forced-interruption recovery, and release
+- public download, upgrade bootstrap, forced-interruption recovery, and public
   rollback operations;
 - retained multi-architecture artifacts and reproducibility comparison across
   independent builders.

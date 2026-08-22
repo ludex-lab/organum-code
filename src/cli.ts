@@ -187,6 +187,8 @@ Usage:
                                Install one verified offline release bundle
   organum-code release status --prefix ABSOLUTE_PATH
                                Verify one managed local installation
+  organum-code release uninstall --prefix ABSOLUTE_PATH
+                               Remove one verified managed installation
   organum-code                 Launch the configured TUI (first run opens setup)
   organum-code configure [--profile NAME]
                                Configure the default or one named actor profile

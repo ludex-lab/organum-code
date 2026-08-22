@@ -103,6 +103,38 @@ exit $LASTEXITCODE
 `;
 }
 
+export function posixUninstallBootstrap(file: string): string {
+  return `#!/bin/sh
+set -eu
+if [ "$#" -ne 1 ]; then
+  echo "usage: ./uninstall.sh /absolute/install/prefix" >&2
+  exit 64
+fi
+case "$1" in
+  /*) ;;
+  *) echo "install prefix must be absolute" >&2; exit 64 ;;
+esac
+bundle_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec "$bundle_dir/${file}" release uninstall --prefix "$1"
+`;
+}
+
+export function powershellUninstallBootstrap(file: string): string {
+  return `param(
+  [Parameter(Mandatory = $true, Position = 0)]
+  [string] $Prefix
+)
+$ErrorActionPreference = "Stop"
+if (-not [System.IO.Path]::IsPathRooted($Prefix)) {
+  Write-Error "install prefix must be absolute"
+  exit 64
+}
+$artifact = Join-Path $PSScriptRoot "${file}"
+& $artifact release uninstall --prefix $Prefix
+exit $LASTEXITCODE
+`;
+}
+
 function bundleReadme(manifest: InstallableReleaseManifest): string {
   const executable = manifest.artifact.file;
   return `Organum Code ${manifest.version} (${manifest.build.platform}/${manifest.build.arch})
@@ -120,6 +152,20 @@ PowerShell:
 
 The bootstrap runs ./${executable} and installs only into the explicit prefix.
 Run <prefix>/bin/${executable} --version after installation.
+
+Uninstall from this extracted release bundle:
+
+POSIX:
+  ./uninstall.sh /absolute/install/prefix
+
+PowerShell:
+  ./uninstall.ps1 C:\\absolute\\install\\prefix
+
+The uninstall bootstrap runs this bundle's executable, verifies the managed
+installation ledger and bytes, and removes only registered Organum Code files.
+On Windows, do not run uninstall through the installed executable because a
+running executable cannot reliably delete itself. Keep this extracted bundle,
+or re-download the exact platform bundle, for removal.
 
 LICENSE contains the Organum Code license. THIRD_PARTY_NOTICES.txt contains the
 pinned compiler runtime and production dependency notices.
@@ -222,6 +268,10 @@ export async function createReleaseArchive(
   );
   const posix = posixBootstrap(manifest.artifact.file);
   const powershell = powershellBootstrap(manifest.artifact.file);
+  const posixUninstall = posixUninstallBootstrap(manifest.artifact.file);
+  const powershellUninstall = powershellUninstallBootstrap(
+    manifest.artifact.file,
+  );
   const readme = bundleReadme(manifest);
   const contentManifest = `${JSON.stringify({
     schema: RELEASE_ARCHIVE_SCHEMA,
@@ -237,6 +287,8 @@ export async function createReleaseArchive(
       { file: `${manifest.artifact.file}.sha256`, bytes: Buffer.byteLength(checksumBody), sha256: sha256(checksumBody), mode: "0644" },
       { file: "install.sh", bytes: Buffer.byteLength(posix), sha256: sha256(posix), mode: "0755" },
       { file: "install.ps1", bytes: Buffer.byteLength(powershell), sha256: sha256(powershell), mode: "0644" },
+      { file: "uninstall.sh", bytes: Buffer.byteLength(posixUninstall), sha256: sha256(posixUninstall), mode: "0755" },
+      { file: "uninstall.ps1", bytes: Buffer.byteLength(powershellUninstall), sha256: sha256(powershellUninstall), mode: "0644" },
       { file: "README.txt", bytes: Buffer.byteLength(readme), sha256: sha256(readme), mode: "0644" },
       { file: "LICENSE", bytes: Buffer.byteLength(licenseBody), sha256: sha256(licenseBody), mode: "0644" },
       { file: "THIRD_PARTY_NOTICES.txt", bytes: Buffer.byteLength(thirdPartyNoticesBody), sha256: sha256(thirdPartyNoticesBody), mode: "0644" },
@@ -256,6 +308,8 @@ export async function createReleaseArchive(
     bufferEntry(`${prefix}bundle.json`, contentManifest, 0o644),
     bufferEntry(`${prefix}install.sh`, posix, 0o755),
     bufferEntry(`${prefix}install.ps1`, powershell, 0o644),
+    bufferEntry(`${prefix}uninstall.sh`, posixUninstall, 0o755),
+    bufferEntry(`${prefix}uninstall.ps1`, powershellUninstall, 0o644),
     bufferEntry(`${prefix}README.txt`, readme, 0o644),
     bufferEntry(`${prefix}LICENSE`, licenseBody, 0o644),
     bufferEntry(`${prefix}THIRD_PARTY_NOTICES.txt`, thirdPartyNoticesBody, 0o644),

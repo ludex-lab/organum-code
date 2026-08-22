@@ -16,7 +16,9 @@ import test from "node:test";
 import {
   createReleaseArchive,
   posixBootstrap,
+  posixUninstallBootstrap,
   powershellBootstrap,
+  powershellUninstallBootstrap,
   releaseArchiveFile,
   releaseArchiveRoot,
 } from "../src/release-archive.js";
@@ -82,11 +84,18 @@ test("release archive naming and bootstraps are platform-bound and runtime-free"
   );
   const sh = posixBootstrap("organum-code");
   const ps1 = powershellBootstrap("organum-code.exe");
+  const uninstallSh = posixUninstallBootstrap("organum-code");
+  const uninstallPs1 = powershellUninstallBootstrap("organum-code.exe");
   assert.match(sh, /organum-code" release install/);
   assert.match(ps1, /organum-code\.exe/);
   assert.match(ps1, /release install/);
+  assert.match(uninstallSh, /organum-code" release uninstall/);
+  assert.match(uninstallPs1, /organum-code\.exe/);
+  assert.match(uninstallPs1, /release uninstall/);
   assert.doesNotMatch(sh, /\bbun\b/i);
   assert.doesNotMatch(ps1, /\bbun\b/i);
+  assert.doesNotMatch(uninstallSh, /\bbun\b/i);
+  assert.doesNotMatch(uninstallPs1, /\bbun\b/i);
 });
 
 test("release tar is deterministic and contains one rooted offline bundle", async () => {
@@ -123,6 +132,8 @@ test("release tar is deterministic and contains one rooted offline bundle", asyn
       `${prefix}bundle.json`,
       `${prefix}install.sh`,
       `${prefix}install.ps1`,
+      `${prefix}uninstall.sh`,
+      `${prefix}uninstall.ps1`,
       `${prefix}README.txt`,
       `${prefix}LICENSE`,
       `${prefix}THIRD_PARTY_NOTICES.txt`,
