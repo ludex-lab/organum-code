@@ -5,6 +5,7 @@ const RELEASE_TESTS = [
   "tests/release-manifest.test.ts",
   "tests/release-source-archive.test.ts",
   "tests/relink-materials.test.ts",
+  "tests/public-distribution.test.ts",
   "tests/runtime.test.ts",
   "tests/third-party-notices.test.ts",
 ] as const;

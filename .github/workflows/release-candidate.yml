@@ -1,0 +1,230 @@
+name: Stage Signed Release Candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_version:
+        description: Exact package version to stage
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.identity.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: identity
+        name: Bind main and exact product version
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          version="$(node -p "require('./package.json').version")"
+          test "${{ inputs.confirm_version }}" = "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  stage-source:
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - run: bun run source:release
+      - name: Attest source archive provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/organum-code-v*-source.tar
+      - name: Retain exact public source archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: organum-code-candidate-Source
+          path: |
+            dist/organum-code-v*-source.tar
+            dist/organum-code-v*-source.tar.sha256
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+  stage-linux:
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run test:release
+      - run: bun run build:bundle-local
+      - run: bun run smoke:release-archive
+      - name: Attest Linux archive provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/organum-code-v*.tar
+      - name: Retain Linux candidate
+        uses: actions/upload-artifact@v7
+        with:
+          name: organum-code-candidate-Linux-${{ runner.arch }}
+          path: |
+            dist/organum-code-v*.tar
+            dist/organum-code-v*.tar.sha256
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+  stage-macos:
+    needs: preflight
+    runs-on: macos-latest
+    environment: public-release-signing
+    env:
+      APPLE_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+      APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+      APPLE_NOTARY_KEY_P8_BASE64: ${{ secrets.APPLE_NOTARY_KEY_P8_BASE64 }}
+      APPLE_NOTARY_KEY_ID: ${{ secrets.APPLE_NOTARY_KEY_ID }}
+      APPLE_NOTARY_ISSUER_ID: ${{ secrets.APPLE_NOTARY_ISSUER_ID }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run test:release
+      - run: bun run build:standalone
+      - name: Import Developer ID and sign exact executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in APPLE_CERTIFICATE_P12_BASE64 APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY; do
+            test -n "${!name:-}"
+          done
+          certificate="$RUNNER_TEMP/organum-code-signing.p12"
+          keychain="$RUNNER_TEMP/organum-code-signing.keychain-db"
+          keychain_password="$(openssl rand -hex 24)"
+          printf '%s' "$APPLE_CERTIFICATE_P12_BASE64" | openssl base64 -d -A -out "$certificate"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$certificate" -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$keychain"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain"
+          security list-keychains -d user -s "$keychain"
+          codesign --force --options runtime --timestamp \
+            --entitlements packaging/macos-entitlements.plist \
+            --sign "$APPLE_SIGNING_IDENTITY" dist/organum-code
+          codesign --verify --strict --verbose=2 dist/organum-code
+      - name: Notarize exact signed executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in APPLE_NOTARY_KEY_P8_BASE64 APPLE_NOTARY_KEY_ID APPLE_NOTARY_ISSUER_ID; do
+            test -n "${!name:-}"
+          done
+          notary_key="$RUNNER_TEMP/AuthKey.p8"
+          notary_zip="$RUNNER_TEMP/organum-code-notary.zip"
+          printf '%s' "$APPLE_NOTARY_KEY_P8_BASE64" | openssl base64 -d -A -out "$notary_key"
+          chmod 600 "$notary_key"
+          ditto -c -k --keepParent dist/organum-code "$notary_zip"
+          xcrun notarytool submit "$notary_zip" \
+            --key "$notary_key" \
+            --key-id "$APPLE_NOTARY_KEY_ID" \
+            --issuer "$APPLE_NOTARY_ISSUER_ID" \
+            --wait --timeout 20m
+          codesign --verify --strict --verbose=2 dist/organum-code
+      - run: bun run manifest:release
+      - run: bun run notices:release
+      - run: bun run bundle:release
+      - run: bun run smoke:release-archive
+      - name: Attest signed macOS archive provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/organum-code-v*.tar
+      - name: Retain signed macOS candidate
+        uses: actions/upload-artifact@v7
+        with:
+          name: organum-code-candidate-macOS-${{ runner.arch }}
+          path: |
+            dist/organum-code-v*.tar
+            dist/organum-code-v*.tar.sha256
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Remove imported signing material
+        if: always()
+        shell: bash
+        run: |
+          security delete-keychain "$RUNNER_TEMP/organum-code-signing.keychain-db" 2>/dev/null || true
+          rm -f "$RUNNER_TEMP/organum-code-signing.p12" "$RUNNER_TEMP/AuthKey.p8" "$RUNNER_TEMP/organum-code-notary.zip"
+
+  stage-windows:
+    needs: preflight
+    runs-on: windows-latest
+    environment: public-release-signing
+    env:
+      WINDOWS_CERTIFICATE_PFX_BASE64: ${{ secrets.WINDOWS_CERTIFICATE_PFX_BASE64 }}
+      WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run test:release
+      - run: bun run build:standalone
+      - name: Authenticode sign and verify exact executable
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:WINDOWS_CERTIFICATE_PFX_BASE64)) { throw "WINDOWS_CERTIFICATE_PFX_BASE64 is required" }
+          if ([string]::IsNullOrWhiteSpace($env:WINDOWS_CERTIFICATE_PASSWORD)) { throw "WINDOWS_CERTIFICATE_PASSWORD is required" }
+          $certificate = Join-Path $env:RUNNER_TEMP "organum-code-signing.pfx"
+          [IO.File]::WriteAllBytes($certificate, [Convert]::FromBase64String($env:WINDOWS_CERTIFICATE_PFX_BASE64))
+          $signTool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1
+          if ($null -eq $signTool) { throw "Windows SDK signtool.exe was not found" }
+          & $signTool.FullName sign /f $certificate /p $env:WINDOWS_CERTIFICATE_PASSWORD /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 /d "Organum Code" dist\organum-code.exe
+          if ($LASTEXITCODE -ne 0) { throw "signtool sign failed" }
+          & $signTool.FullName verify /pa /v dist\organum-code.exe
+          if ($LASTEXITCODE -ne 0) { throw "signtool verify failed" }
+      - run: bun run manifest:release
+      - run: bun run notices:release
+      - run: bun run bundle:release
+      - run: bun run smoke:release-archive
+      - name: Attest signed Windows archive provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/organum-code-v*.tar
+      - name: Retain signed Windows candidate
+        uses: actions/upload-artifact@v7
+        with:
+          name: organum-code-candidate-Windows-${{ runner.arch }}
+          path: |
+            dist/organum-code-v*.tar
+            dist/organum-code-v*.tar.sha256
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Remove imported signing material
+        if: always()
+        shell: pwsh
+        run: Remove-Item (Join-Path $env:RUNNER_TEMP "organum-code-signing.pfx") -Force -ErrorAction SilentlyContinue

@@ -77,4 +77,11 @@ source cut의 MIT와 standalone executable의 재배포 의무는 별도다. Bun
    결과를 기록한다.
 8. gate를 통과하지 못한 platform binary는 release하지 않음
 
+`Stage Release Artifacts`는 서명 전 portability·relink·provenance rehearsal이다.
+실제 배포 후보는 `Stage Signed Release Candidate`만 만들 수 있다. 이 workflow는
+exact `main`/version 확인 뒤 Linux provenance, Developer ID + Apple notarization,
+Windows Authenticode를 각각 통과시켜야 하며 public Release를 자동 생성하지 않는다.
+필요한 credential, 후보 검증 및 수동 승격 절차는
+[`public-distribution-cut.md`](./public-distribution-cut.md)에 고정한다.
+
 이 문서는 법률 자문을 대신하지 않는다. dependency 또는 build 방식이 바뀌면 release마다 다시 검토한다.
