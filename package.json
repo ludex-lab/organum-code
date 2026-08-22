@@ -1,0 +1,49 @@
+{
+  "name": "organum-code",
+  "version": "0.1.0-preview.1",
+  "description": "Backend-neutral supervised coding runtime for Organum",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ludex-lab/organum-code.git"
+  },
+  "homepage": "https://ludex-lab.github.io/organum/",
+  "bugs": {
+    "url": "https://github.com/ludex-lab/organum-code/issues"
+  },
+  "packageManager": "bun@1.3.14",
+  "engines": {
+    "bun": ">=1.3.11",
+    "node": ">=20"
+  },
+  "bin": {
+    "organum-code": "./dist/src/main.js"
+  },
+  "scripts": {
+    "build": "bun run build:plugin && tsc -p tsconfig.json",
+    "build:plugin": "bun ./scripts/build-first-party-plugin.ts",
+    "build:standalone": "bun run build:plugin && bun build ./src/main.ts --compile --minify --outfile ./dist/organum-code",
+    "build:release-local": "bun run build:standalone && bun run manifest:release",
+    "build:bundle-local": "bun run build:release-local && bun run bundle:release",
+    "bundle:release": "bun ./scripts/generate-release-archive.ts",
+    "check": "bun ./scripts/build-first-party-plugin.ts --check && tsc -p tsconfig.json --noEmit",
+    "manifest:release": "bun ./scripts/generate-release-manifest.ts",
+    "manage:release-installation": "bun ./scripts/manage-release-installation.ts",
+    "smoke:standalone": "bun ./scripts/smoke-standalone.ts",
+    "smoke:release-installation": "bun ./scripts/smoke-release-installation.ts",
+    "smoke:release-archive": "bun ./scripts/smoke-release-archive.ts",
+    "test:release": "bun test ./tests/release-archive.test.ts ./tests/release-cli.test.ts ./tests/release-installation.test.ts ./tests/release-manifest.test.ts ./tests/runtime.test.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sandbox-runtime": "0.0.50",
+    "shell-quote": "1.8.3",
+    "zod": "4.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "@types/shell-quote": "1.7.5",
+    "typescript": "5.9.3"
+  }
+}

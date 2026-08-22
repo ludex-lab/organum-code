@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://organum.dev/schemas/organum-code-organism-cast-prepare-receipt-v1.schema.json",
+  "$comment": "Structural projection. The Zod source and its cross-field refinements remain authoritative.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "organum-code/organism-cast-prepare-receipt/v1"
+    },
+    "producer_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "prepare_id": {
+      "type": "string",
+      "pattern": "^prepare-[0-9a-f]{32}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+    },
+    "arm": {
+      "type": "string",
+      "enum": [
+        "organum",
+        "bare"
+      ]
+    },
+    "phase": {
+      "type": "string",
+      "const": "prepared"
+    },
+    "manifest": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": "^(?!\\/)(?!.*(?:^|\\/)\\.\\.?(?:\\/|$))(?!.*\\/\\/)[A-Za-z0-9](?:[A-Za-z0-9._/-]{0,1022}[A-Za-z0-9])?$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "preregistration": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": "^(?!\\/)(?!.*(?:^|\\/)\\.\\.?(?:\\/|$))(?!.*\\/\\/)[A-Za-z0-9](?:[A-Za-z0-9._/-]{0,1022}[A-Za-z0-9])?$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "prepared_state_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "launch_count": {
+      "type": "number",
+      "const": 0
+    },
+    "actor_process_count": {
+      "type": "number",
+      "const": 0
+    },
+    "backend_process_count": {
+      "type": "number",
+      "const": 0
+    },
+    "provider_request_count": {
+      "type": "number",
+      "const": 0
+    }
+  },
+  "required": [
+    "schema",
+    "producer_revision",
+    "prepare_id",
+    "run_id",
+    "arm",
+    "phase",
+    "manifest",
+    "preregistration",
+    "prepared_state_sha256",
+    "launch_count",
+    "actor_process_count",
+    "backend_process_count",
+    "provider_request_count"
+  ],
+  "additionalProperties": false
+}

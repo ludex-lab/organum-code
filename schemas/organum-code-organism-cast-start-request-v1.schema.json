@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://organum.dev/schemas/organum-code-organism-cast-start-request-v1.schema.json",
+  "$comment": "Structural projection. The Zod source and its cross-field refinements remain authoritative.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "organum-code/organism-cast-start-request/v1"
+    },
+    "prepare_id": {
+      "type": "string",
+      "pattern": "^prepare-[0-9a-f]{32}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+    },
+    "arm": {
+      "type": "string",
+      "enum": [
+        "organum",
+        "bare"
+      ]
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "preregistration_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "prepared_state_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "registration_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pending_packet_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "schema",
+    "prepare_id",
+    "run_id",
+    "arm",
+    "manifest_sha256",
+    "preregistration_sha256",
+    "prepared_state_sha256",
+    "registration_sha256",
+    "pending_packet_sha256",
+    "idempotency_key"
+  ],
+  "additionalProperties": false
+}

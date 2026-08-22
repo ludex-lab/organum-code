@@ -1,0 +1,505 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://organum.dev/schemas/organum-code-native-tool-capability-v1.schema.json",
+  "$comment": "Structural projection. The Zod source and its cross-field refinements remain authoritative.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "organum-code/native-tool-capability/v1"
+    },
+    "path": {
+      "type": "object",
+      "properties": {
+        "backendId": {
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+        },
+        "backendVersion": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._+-]{0,126}[A-Za-z0-9])?$"
+        },
+        "productSurface": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        },
+        "launchMode": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "darwin",
+            "linux",
+            "win32"
+          ]
+        },
+        "platformVersion": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._+-]{0,126}[A-Za-z0-9])?$"
+        }
+      },
+      "required": [
+        "backendId",
+        "backendVersion",
+        "productSurface",
+        "launchMode",
+        "platform",
+        "platformVersion"
+      ],
+      "additionalProperties": false
+    },
+    "fixture": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        },
+        "sourceRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "providerCalls": {
+          "type": "number",
+          "const": 0
+        },
+        "argumentCanonicalization": {
+          "type": "string",
+          "const": "organum-code/rfc8785-json-arguments/v1"
+        },
+        "policy": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+                },
+                "version": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._+-]{0,126}[A-Za-z0-9])?$"
+                }
+              },
+              "required": [
+                "id",
+                "version"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "sourceRevision",
+        "providerCalls",
+        "argumentCanonicalization",
+        "policy"
+      ],
+      "additionalProperties": false
+    },
+    "invariants": {
+      "type": "object",
+      "properties": {
+        "I1_PRE_EXEC": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I2_REQUEST_BINDING": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I3_REJECT_BLOCKS": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I4_EXACT_ONCE": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I5_CANCEL_CLOSE": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I6_SECRET_FREE": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I7_UNKNOWN_CLOSED": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I8_NO_STANDING_GRANT": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I9_SETTLED": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        },
+        "I10_CONTAINMENT_FLOOR": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "fail",
+                "unproven"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "counterexample",
+                "fixture_failed",
+                "not_observed",
+                "surface_unavailable",
+                "version_drift",
+                "fixture_unavailable"
+              ]
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "^(?!\\.{1,2}$)[^\\\\\\u0000]{1,512}$"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "evidence"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "I1_PRE_EXEC",
+        "I2_REQUEST_BINDING",
+        "I3_REJECT_BLOCKS",
+        "I4_EXACT_ONCE",
+        "I5_CANCEL_CLOSE",
+        "I6_SECRET_FREE",
+        "I7_UNKNOWN_CLOSED",
+        "I8_NO_STANDING_GRANT",
+        "I9_SETTLED",
+        "I10_CONTAINMENT_FLOOR"
+      ],
+      "additionalProperties": false
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "full",
+        "partial",
+        "unavailable",
+        "blocked"
+      ]
+    },
+    "receipt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^(?!\\.{1,2}$)[^/\\\\\\u0000]{1,512}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "path",
+    "fixture",
+    "invariants",
+    "classification",
+    "receipt"
+  ],
+  "additionalProperties": false
+}

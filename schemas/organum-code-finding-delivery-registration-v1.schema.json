@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://organum.dev/schemas/organum-code-finding-delivery-registration-v1.schema.json",
+  "$comment": "Structural projection. The Zod source and its cross-field refinements remain authoritative.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "organum-code/finding-delivery-registration/v1"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+    },
+    "finding_id": {
+      "type": "string",
+      "pattern": "^h-runaway-[0-9a-f]{64}$"
+    },
+    "finding_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "hazard_id": {
+      "type": "string",
+      "const": "H-runaway"
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "lane_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "actor_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+        }
+      },
+      "required": [
+        "lane_id",
+        "actor_id"
+      ],
+      "additionalProperties": false
+    },
+    "route": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": [
+            "organum_coordination",
+            "bare_no_coordination"
+          ]
+        },
+        "route_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+        }
+      },
+      "required": [
+        "channel",
+        "route_id"
+      ],
+      "additionalProperties": false
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+    }
+  },
+  "required": [
+    "schema",
+    "run_id",
+    "finding_id",
+    "finding_sha256",
+    "hazard_id",
+    "target",
+    "route",
+    "detected_at"
+  ],
+  "additionalProperties": false
+}

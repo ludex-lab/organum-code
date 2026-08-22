@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://organum.dev/schemas/organum-code-organism-cast-prepare-request-v1.schema.json",
+  "$comment": "Structural projection. The Zod source and its cross-field refinements remain authoritative.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "organum-code/organism-cast-prepare-request/v1"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+    },
+    "arm": {
+      "type": "string",
+      "enum": [
+        "organum",
+        "bare"
+      ]
+    },
+    "manifest": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "preregistration": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "run_id",
+    "arm",
+    "manifest",
+    "preregistration"
+  ],
+  "additionalProperties": false
+}

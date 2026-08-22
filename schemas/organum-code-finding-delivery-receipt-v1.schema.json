@@ -1,0 +1,450 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://organum.dev/schemas/organum-code-finding-delivery-receipt-v1.schema.json",
+  "$comment": "Structural projection. The Zod source and its cross-field refinements remain authoritative.",
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": "string",
+          "const": "organum-code/finding-delivery-receipt/v1"
+        },
+        "producer_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "finding_id": {
+          "type": "string",
+          "pattern": "^h-runaway-[0-9a-f]{64}$"
+        },
+        "finding_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "lane_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+            },
+            "actor_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+            }
+          },
+          "required": [
+            "lane_id",
+            "actor_id"
+          ],
+          "additionalProperties": false
+        },
+        "route": {
+          "type": "object",
+          "properties": {
+            "channel": {
+              "type": "string",
+              "enum": [
+                "organum_coordination",
+                "bare_no_coordination"
+              ]
+            },
+            "route_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+            },
+            "transport_event_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "dedup_key": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "channel",
+            "route_id",
+            "transport_event_id",
+            "dedup_key"
+          ],
+          "additionalProperties": false
+        },
+        "registration_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "lifecycle_ledger_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "registered_seq": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "outcome": {
+          "type": "string",
+          "const": "delivered"
+        },
+        "delivery": {
+          "type": "object",
+          "properties": {
+            "semantic_input_seq": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "turn_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+            },
+            "transport_event_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+            },
+            "input_packet_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "surface": {
+              "type": "string",
+              "const": "provider_semantic_input"
+            }
+          },
+          "required": [
+            "semantic_input_seq",
+            "turn_id",
+            "transport_event_id",
+            "input_packet_sha256",
+            "surface"
+          ],
+          "additionalProperties": false
+        },
+        "terminal_seq": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "reason": {
+          "type": "null"
+        },
+        "emitted_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+        }
+      },
+      "required": [
+        "schema",
+        "producer_revision",
+        "run_id",
+        "finding_id",
+        "finding_sha256",
+        "target",
+        "route",
+        "registration_sha256",
+        "lifecycle_ledger_sha256",
+        "registered_seq",
+        "outcome",
+        "delivery",
+        "terminal_seq",
+        "reason",
+        "emitted_at"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": "string",
+          "const": "organum-code/finding-delivery-receipt/v1"
+        },
+        "producer_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "finding_id": {
+          "type": "string",
+          "pattern": "^h-runaway-[0-9a-f]{64}$"
+        },
+        "finding_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "lane_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+            },
+            "actor_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+            }
+          },
+          "required": [
+            "lane_id",
+            "actor_id"
+          ],
+          "additionalProperties": false
+        },
+        "route": {
+          "type": "object",
+          "properties": {
+            "channel": {
+              "type": "string",
+              "enum": [
+                "organum_coordination",
+                "bare_no_coordination"
+              ]
+            },
+            "route_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+            },
+            "transport_event_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "dedup_key": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "channel",
+            "route_id",
+            "transport_event_id",
+            "dedup_key"
+          ],
+          "additionalProperties": false
+        },
+        "registration_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "lifecycle_ledger_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "registered_seq": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "outcome": {
+          "type": "string",
+          "const": "not_delivered"
+        },
+        "delivery": {
+          "type": "null"
+        },
+        "terminal_seq": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "no_semantic_input_before_terminal",
+            "no_coordination_channel"
+          ]
+        },
+        "emitted_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+        }
+      },
+      "required": [
+        "schema",
+        "producer_revision",
+        "run_id",
+        "finding_id",
+        "finding_sha256",
+        "target",
+        "route",
+        "registration_sha256",
+        "lifecycle_ledger_sha256",
+        "registered_seq",
+        "outcome",
+        "delivery",
+        "terminal_seq",
+        "reason",
+        "emitted_at"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": "string",
+          "const": "organum-code/finding-delivery-receipt/v1"
+        },
+        "producer_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+        },
+        "finding_id": {
+          "type": "string",
+          "pattern": "^h-runaway-[0-9a-f]{64}$"
+        },
+        "finding_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "lane_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+            },
+            "actor_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+            }
+          },
+          "required": [
+            "lane_id",
+            "actor_id"
+          ],
+          "additionalProperties": false
+        },
+        "route": {
+          "type": "object",
+          "properties": {
+            "channel": {
+              "type": "string",
+              "enum": [
+                "organum_coordination",
+                "bare_no_coordination"
+              ]
+            },
+            "route_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+            },
+            "transport_event_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,254}[A-Za-z0-9])?$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "dedup_key": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "channel",
+            "route_id",
+            "transport_event_id",
+            "dedup_key"
+          ],
+          "additionalProperties": false
+        },
+        "registration_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "lifecycle_ledger_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "registered_seq": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "outcome": {
+          "type": "string",
+          "const": "unknown"
+        },
+        "delivery": {
+          "type": "null"
+        },
+        "terminal_seq": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "terminal_unobserved",
+            "ambiguous_transport_match",
+            "producer_state_incomplete"
+          ]
+        },
+        "emitted_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+        }
+      },
+      "required": [
+        "schema",
+        "producer_revision",
+        "run_id",
+        "finding_id",
+        "finding_sha256",
+        "target",
+        "route",
+        "registration_sha256",
+        "lifecycle_ledger_sha256",
+        "registered_seq",
+        "outcome",
+        "delivery",
+        "terminal_seq",
+        "reason",
+        "emitted_at"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+coverage/
+.organum-code/
+.artifacts/
+__pycache__/
+*.py[cod]

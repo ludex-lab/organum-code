@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://organum.dev/schemas/organum-code-native-tool-approval-v1.schema.json",
+  "$comment": "Structural projection. The Zod source and its cross-field refinements remain authoritative.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "organum-code/native-tool-approval/v1"
+    },
+    "path": {
+      "type": "object",
+      "properties": {
+        "backendId": {
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+        },
+        "backendVersion": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._+-]{0,126}[A-Za-z0-9])?$"
+        },
+        "productSurface": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        },
+        "launchMode": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "darwin",
+            "linux",
+            "win32"
+          ]
+        },
+        "platformVersion": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._+-]{0,126}[A-Za-z0-9])?$"
+        }
+      },
+      "required": [
+        "backendId",
+        "backendVersion",
+        "productSurface",
+        "launchMode",
+        "platform",
+        "platformVersion"
+      ],
+      "additionalProperties": false
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "supervisorRoot": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        },
+        "nativeSessionId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        },
+        "turnId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        }
+      },
+      "required": [
+        "supervisorRoot",
+        "nativeSessionId",
+        "turnId"
+      ],
+      "additionalProperties": false
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "requestedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+        },
+        "nativeToolCallId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+        },
+        "nativeToolName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "effectClass": {
+          "type": "string",
+          "enum": [
+            "read",
+            "write",
+            "execute",
+            "network",
+            "mcp",
+            "unknown"
+          ]
+        },
+        "argumentCanonicalization": {
+          "type": "string",
+          "const": "organum-code/rfc8785-json-arguments/v1"
+        },
+        "argumentDigestAlgorithm": {
+          "type": "string",
+          "const": "sha-256"
+        },
+        "argumentBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65536
+        },
+        "argumentSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "requestedAt",
+        "nativeToolCallId",
+        "nativeToolName",
+        "effectClass",
+        "argumentCanonicalization",
+        "argumentDigestAlgorithm",
+        "argumentBytes",
+        "argumentSha256"
+      ],
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "properties": {
+        "decidedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "allow_once",
+            "reject_once",
+            "cancelled"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "approved",
+            "human_rejected",
+            "policy_denied",
+            "unknown_effect",
+            "presenter_cancelled",
+            "request_expired",
+            "session_closed"
+          ]
+        },
+        "decider": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "human"
+                },
+                "presenter": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+                }
+              },
+              "required": [
+                "kind",
+                "presenter"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "policy"
+                },
+                "policyId": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._:@/-]{0,510}[A-Za-z0-9])?$"
+                },
+                "policyVersion": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._+-]{0,126}[A-Za-z0-9])?$"
+                }
+              },
+              "required": [
+                "kind",
+                "policyId",
+                "policyVersion"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "latencyMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "grant": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^ocgrant-[0-9a-f]{32}$"
+                },
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "consumed",
+                    "revoked"
+                  ]
+                },
+                "settledAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                }
+              },
+              "required": [
+                "id",
+                "state",
+                "settledAt"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "decidedAt",
+        "decision",
+        "reason",
+        "decider",
+        "latencyMs",
+        "grant"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "path",
+    "actor",
+    "request",
+    "decision"
+  ],
+  "additionalProperties": false
+}

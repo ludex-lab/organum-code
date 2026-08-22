@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://organum.dev/schemas/organum-code-organism-cast-provider-zero-observation-v1.schema.json",
+  "$comment": "Provider-zero diagnostic evidence only; never launch authority or a finding-delivery receipt.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "organum-code/organism-cast-provider-zero-observation/v1"
+    },
+    "producer_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+    },
+    "arm": {
+      "type": "string",
+      "enum": [
+        "organum",
+        "bare"
+      ]
+    },
+    "prepare_id": {
+      "type": "string",
+      "pattern": "^prepare-[0-9a-f]{32}$"
+    },
+    "idempotency_key": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fault_mode": {
+      "type": "string",
+      "enum": [
+        "none",
+        "lost-response",
+        "network",
+        "non-2xx",
+        "durability-gap",
+        "ambiguous-launch"
+      ]
+    },
+    "prepare_call_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "start_call_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "packet_admission_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "launch_attempt_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "upstream_request_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "semantic_persist_attempt_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "packet_resend_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "durable_phase": {
+      "type": "string",
+      "enum": [
+        "prepared",
+        "started",
+        "incomplete"
+      ]
+    },
+    "receipt_emitted": {
+      "type": "boolean"
+    },
+    "cast_result_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+    }
+  },
+  "required": [
+    "schema",
+    "producer_revision",
+    "run_id",
+    "arm",
+    "prepare_id",
+    "idempotency_key",
+    "fault_mode",
+    "prepare_call_count",
+    "start_call_count",
+    "packet_admission_count",
+    "launch_attempt_count",
+    "upstream_request_count",
+    "semantic_persist_attempt_count",
+    "packet_resend_count",
+    "durable_phase",
+    "receipt_emitted",
+    "cast_result_sha256",
+    "recorded_at"
+  ],
+  "additionalProperties": false
+}
