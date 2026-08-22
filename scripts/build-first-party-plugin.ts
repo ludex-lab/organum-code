@@ -49,14 +49,17 @@ function normalizeLineEndings(value: string): string {
   return value.replace(/\r\n/g, "\n");
 }
 
+const current = await readFile(generatedPath, "utf8").catch(() => "");
+const currentMatches =
+  normalizeLineEndings(current) === normalizeLineEndings(generated);
+
 if (check) {
-  const current = await readFile(generatedPath, "utf8").catch(() => "");
-  if (normalizeLineEndings(current) !== normalizeLineEndings(generated)) {
+  if (!currentMatches) {
     throw new Error(
       "First-party plugin bundle is stale; run `bun run build:plugin`",
     );
   }
-} else {
+} else if (!currentMatches) {
   await mkdir(dirname(generatedPath), { recursive: true });
   await writeFile(generatedPath, generated, "utf8");
 }
