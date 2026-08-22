@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { delimiter, join, resolve } from "node:path";
 
@@ -73,14 +73,38 @@ try {
 
   const uninstall = bun(["remove", "--global", "organum-code"]);
   assert.equal(uninstall.status, 0, uninstall.stderr || uninstall.stdout);
-  assert.equal(
-    (await readdir(bin).catch((error: unknown) => {
-      if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
-      throw error;
-    })).some((name) => name === "organum-code" || name.startsWith("organum-code.")),
-    false,
-    "source-install command shim survived global uninstall",
+  const installedPackage = join(
+    bunInstall,
+    "install",
+    "global",
+    "node_modules",
+    "organum-code",
   );
+  assert.equal(
+    await access(installedPackage).then(() => true, () => false),
+    false,
+    "global source package survived uninstall",
+  );
+
+  const removedCommand = spawnSync("organum-code", ["--version"], {
+    cwd: root,
+    env: environment,
+    encoding: "utf8",
+    shell: false,
+    timeout: 30_000,
+  });
+  assert.notEqual(
+    removedCommand.status,
+    0,
+    "source-install command remained executable after global uninstall",
+  );
+  const remainingLaunchers = (await readdir(bin).catch((error: unknown) => {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw error;
+  })).filter((name) => name === "organum-code" || name.startsWith("organum-code."));
+  if (remainingLaunchers.length > 0) {
+    console.log(`inactive Bun launcher metadata retained: ${remainingLaunchers.join(",")}`);
+  }
   console.log(`source install/uninstall smoke passed: ${process.platform}/${process.arch}`);
 } finally {
   await rm(root, { recursive: true, force: true });

@@ -44,11 +44,16 @@ bun remove --global organum-code
 bun add --global github:ludex-lab/organum-code#NEW_VERSION_TAG
 ```
 
-Uninstall removes the global source package and its command shim:
+Uninstall removes the global source package and disables the command:
 
 ```console
 bun remove --global organum-code
 ```
+
+Bun 1.3.14 may retain inert launcher metadata in its Windows global bin
+directory after a successful removal. It no longer resolves or executes the
+removed package. Do not manually delete the broader Bun directory; a future Bun
+upgrade can clean up its own launcher metadata.
 
 Organum Code runtime state and provider credentials are deliberately not deleted
 by package uninstall. They remain under their documented user-scoped locations
