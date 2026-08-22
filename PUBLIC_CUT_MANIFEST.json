@@ -2,7 +2,7 @@
   "schema": "organum-code/public-cut/v1",
   "source": {
     "repository": "JihoonJeong/organum-code",
-    "commit": "238130b6db56c67b17332cc657929aca51380003"
+    "commit": "181e4d2d168f1096c936b5bad85fb2fa63d1f045"
   },
   "target": "ludex-lab/organum-code",
   "version": "0.1.0-preview.1",
@@ -197,7 +197,7 @@
     },
     {
       "path": "scripts/smoke-source-install.ts",
-      "sha256": "2d2937d6978831149a27e5dddfb3c8aa03b6c23653d811c163c2b17664001989"
+      "sha256": "b1708f36912f5b557f1335a13031534052c2911cf0e8d2c43e5d929257e47735"
     },
     {
       "path": "scripts/smoke-standalone.ts",

@@ -27,6 +27,7 @@ assert.match(entrypoint, /import "\.\.\/src\/main\.ts";/u);
 const root = await mkdtemp(join(tmpdir(), "organum-code-source-install-"));
 const bunInstall = join(root, "bun-home");
 const bin = join(bunInstall, "bin");
+const tarball = join(root, `organum-code-${ORGANUM_CODE_VERSION}.tgz`);
 const environment = {
   ...process.env,
   BUN_INSTALL: bunInstall,
@@ -44,7 +45,20 @@ function bun(args: readonly string[]) {
 }
 
 try {
-  const install = bun(["add", "--global", project]);
+  const pack = spawnSync(
+    process.execPath,
+    ["pm", "pack", "--destination", root, "--ignore-scripts", "--quiet"],
+    {
+      cwd: project,
+      env: process.env,
+      encoding: "utf8",
+      shell: false,
+      timeout: 120_000,
+    },
+  );
+  assert.equal(pack.status, 0, pack.stderr || pack.stdout);
+
+  const install = bun(["add", "--global", tarball]);
   assert.equal(install.status, 0, install.stderr || install.stdout);
 
   const version = spawnSync("organum-code", ["--version"], {
@@ -60,7 +74,10 @@ try {
   const uninstall = bun(["remove", "--global", "organum-code"]);
   assert.equal(uninstall.status, 0, uninstall.stderr || uninstall.stdout);
   assert.equal(
-    (await readdir(bin)).some((name) => name === "organum-code" || name.startsWith("organum-code.")),
+    (await readdir(bin).catch((error: unknown) => {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+      throw error;
+    })).some((name) => name === "organum-code" || name.startsWith("organum-code.")),
     false,
     "source-install command shim survived global uninstall",
   );
