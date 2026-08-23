@@ -2,7 +2,7 @@
   "schema": "organum-code/public-cut/v1",
   "source": {
     "repository": "JihoonJeong/organum-code",
-    "commit": "e3cf009d475eb51f5a8d1b049463b52821d1610c"
+    "commit": "51700ccb72b3e9c0685cbd1dc940b5f84fcae343"
   },
   "target": "ludex-lab/organum-code",
   "version": "0.1.0-preview.1",
@@ -13,7 +13,7 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "006d2fde9437707ffd7a485f6a463fa874cff4ef77e8ea026680f4f5d6b554c6"
+      "sha256": "c617b67c73c53a91ff6d406b5c931a1bff87eb4b967020b9f3fca3976d1cd64b"
     },
     {
       "path": ".github/workflows/release-candidate.yml",

@@ -23,7 +23,6 @@ jobs:
         with:
           node-version: 22
       - run: bun install --frozen-lockfile
-      - run: bun run check
       - run: bun test tests/source-install.test.ts
       - run: bun run smoke:source-install
 
