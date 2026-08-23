@@ -1,19 +1,33 @@
 # Bun source installation
 
-This is the public preview installation channel for macOS and Windows while
+This is the public preview installation channel for macOS, Windows, and Linux while
 native standalone signing is deferred. Organum Code itself ships no downloaded
 native executable through this channel. The installed command is a small source
 entrypoint executed by the user's Bun runtime.
 
 ## Prerequisite
 
-Install Bun from its official distribution and confirm the exact supported
-runtime:
+Install the current stable Bun from the
+[official installation page](https://bun.com/docs/installation) and confirm it
+runs before installing Organum Code:
 
 ```console
 bun --version
-1.3.14
+1.4.0
 ```
+
+`v0.1.0-preview.1` is consumer-tested on Bun `1.3.14` and `1.4.0`. Current
+stable Bun `1.4.0` is recommended for a new installation. The repository's
+`.bun-version` remains `1.3.14` because that is the reproducible producer,
+test, and native-build runtime, not a requirement to downgrade a working
+consumer installation.
+
+Do not run the Bun installer merely to replace a working `1.4.0` with
+`1.3.14`. If Bun installation or upgrade fails, stop before installing
+Organum Code and confirm `bun --version` works again. On Windows, an interrupted
+Bun installer can leave the prior executable as `~\.bun\bin\bun.exe.outdated`;
+use Bun's official installation or direct-download recovery path rather than
+deleting the broader `.bun` directory.
 
 ## Install
 
@@ -51,9 +65,12 @@ bun remove --global organum-code
 ```
 
 Bun 1.3.14 may retain inert launcher metadata in its Windows global bin
-directory after a successful removal. It no longer resolves or executes the
-removed package. Do not manually delete the broader Bun directory; a future Bun
-upgrade can clean up its own launcher metadata.
+directory after a successful removal. The package directory is gone and the
+launcher no longer resolves or executes the removed package. Do not manually
+delete the broader Bun directory; a future Bun upgrade can clean up its own
+launcher metadata. Bun 1.4.0 removed the launcher cleanly in the macOS
+consumer check; Windows 1.4.0 remains covered by the public CI compatibility
+lane.
 
 Organum Code runtime state and provider credentials are deliberately not deleted
 by package uninstall. They remain under their documented user-scoped locations

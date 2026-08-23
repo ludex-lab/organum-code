@@ -30,6 +30,10 @@ test("public installation documentation pins a tag and has symmetric removal", a
     documentation,
     /bun add --global github:ludex-lab\/organum-code#v0\.1\.0-preview\.1/u,
   );
+  assert.match(documentation, /official installation page/u);
+  assert.match(documentation, /consumer-tested on Bun `1\.3\.14` and `1\.4\.0`/u);
+  assert.match(documentation, /Current\s+stable Bun `1\.4\.0` is recommended/u);
+  assert.match(documentation, /reproducible producer/u);
   assert.match(documentation, /bun remove --global organum-code/u);
   assert.match(documentation, /no Apple Developer ID or Windows Authenticode claim/u);
 });

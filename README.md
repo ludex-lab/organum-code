@@ -28,7 +28,9 @@ shared product homepage for Organum Inspector, Organum Hub, and Organum Code is
 ## Install the public preview
 
 Organum Code currently uses one free, source-based installation channel on
-macOS and Windows. Install the exact Bun version in `.bun-version`, then:
+macOS, Windows, and Linux. Install current stable Bun from its
+[official installation page](https://bun.com/docs/installation), verify
+`bun --version`, then:
 
 ```bash
 bun add --global github:ludex-lab/organum-code#v0.1.0-preview.1
@@ -37,11 +39,12 @@ organum-code --version
 
 This installs a Bun-owned source command, not an unsigned Organum Code native
 executable. See [Bun source installation](docs/source-installation.md) for
-upgrade, uninstall, and trust-boundary details.
+the tested consumer versions, upgrade, uninstall, and trust-boundary details.
 
 ## Build from source
 
-Source builds require the exact Bun version in `.bun-version`.
+Source development and reproducible native builds require the exact producer
+Bun version in `.bun-version`.
 
 ```bash
 bun install --frozen-lockfile
