@@ -4,8 +4,10 @@ import test from "node:test";
 
 import {
   assertCanonicalBunRuntime,
+  assertSupportedBunConsumerRuntime,
   CANONICAL_BUN_VERSION,
   currentBunVersion,
+  SUPPORTED_BUN_CONSUMER_VERSIONS,
 } from "../src/runtime.js";
 
 test("Bun version pin agrees across runtime metadata", () => {
@@ -31,5 +33,17 @@ test("runtime guard rejects a different Bun version", () => {
   assert.throws(
     () => assertCanonicalBunRuntime("1.3.13"),
     /Bun 1\.3\.14 is required; found Bun 1\.3\.13/,
+  );
+});
+
+test("consumer runtime guard accepts the public source-install matrix", () => {
+  assert.deepEqual(SUPPORTED_BUN_CONSUMER_VERSIONS, ["1.3.14", "1.4.0"]);
+  assert.doesNotThrow(() => assertSupportedBunConsumerRuntime(undefined));
+  for (const version of SUPPORTED_BUN_CONSUMER_VERSIONS) {
+    assert.doesNotThrow(() => assertSupportedBunConsumerRuntime(version));
+  }
+  assert.throws(
+    () => assertSupportedBunConsumerRuntime("1.4.1"),
+    /Bun 1\.3\.14 or 1\.4\.0 is required; found Bun 1\.4\.1/,
   );
 });

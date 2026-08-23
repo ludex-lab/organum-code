@@ -7,12 +7,12 @@ import {
 } from "./claude-native-tool-hook.js";
 import { ConfigurationError } from "./provider-profile.js";
 import {
-  assertCanonicalBunRuntime,
+  assertSupportedBunConsumerRuntime,
   currentBunVersion,
 } from "./runtime.js";
 
 async function run(): Promise<number> {
-  assertCanonicalBunRuntime(currentBunVersion());
+  assertSupportedBunConsumerRuntime(currentBunVersion());
   if (process.argv[2] === "__claude-native-tool-hook") {
     const endpoint = process.argv[3];
     const timeout = process.argv[4];

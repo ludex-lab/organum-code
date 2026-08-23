@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { access, mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { delimiter, join, resolve } from "node:path";
+import { delimiter, dirname, join, resolve } from "node:path";
 
 import { ORGANUM_CODE_VERSION } from "../src/product.js";
 
@@ -31,7 +31,7 @@ const tarball = join(root, `organum-code-${ORGANUM_CODE_VERSION}.tgz`);
 const environment = {
   ...process.env,
   BUN_INSTALL: bunInstall,
-  PATH: `${bin}${delimiter}${process.env.PATH ?? ""}`,
+  PATH: `${bin}${delimiter}${dirname(process.execPath)}${delimiter}${process.env.PATH ?? ""}`,
 };
 
 function bun(args: readonly string[]) {

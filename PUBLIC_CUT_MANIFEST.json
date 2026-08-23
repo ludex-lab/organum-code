@@ -2,7 +2,7 @@
   "schema": "organum-code/public-cut/v1",
   "source": {
     "repository": "JihoonJeong/organum-code",
-    "commit": "51700ccb72b3e9c0685cbd1dc940b5f84fcae343"
+    "commit": "7c71f8b88054f7ed98bf20a60f9bfb7aabd56766"
   },
   "target": "ludex-lab/organum-code",
   "version": "0.1.0-preview.1",
@@ -197,7 +197,7 @@
     },
     {
       "path": "scripts/smoke-source-install.ts",
-      "sha256": "bbf08d7924359a7bc4a3a7fd933030fb5e0d98a7c46ce0f06458020760e5ae8a"
+      "sha256": "38135e76eb57066918fc2325a3b6842d2e5c602b05475088b4199e36b192e4c0"
     },
     {
       "path": "scripts/smoke-standalone.ts",
@@ -461,7 +461,7 @@
     },
     {
       "path": "src/main.ts",
-      "sha256": "ac8270dfd893f88164dcbe9b9a9acc10e3212bfc8d2b49ed8bae7756aba62ee6"
+      "sha256": "ad8305ab152e69e50dedad3e11e60444cef624b87c4d42bc045529b7f19dc2e5"
     },
     {
       "path": "src/measurement-replay.ts",
@@ -677,7 +677,7 @@
     },
     {
       "path": "src/runtime.ts",
-      "sha256": "0ddba88befd2ea033c0f842b8cd3844d993befb391a731b9f409a50806e119c3"
+      "sha256": "4df4b72db9e9c78caff0a20ffe54b29e3f726738c8cd09ac1d7f8549e276be0e"
     },
     {
       "path": "src/seam-joint-containment.ts",
@@ -749,7 +749,7 @@
     },
     {
       "path": "tests/runtime.test.ts",
-      "sha256": "09a1dbfffc400c1e1ff2ae973c377caeef889907f331d7ff38a0b02466911074"
+      "sha256": "26f8c93be0dfa86a48d732c2644009b5752c41e053019dd766deb558118d53a8"
     },
     {
       "path": "tests/source-install.test.ts",
